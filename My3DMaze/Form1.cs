@@ -34,6 +34,8 @@ namespace My3DMaze
          *  purple monster : when a monster died , it will be stronger
          *  
          * */
+
+        private CoolDownTime keyLock;   //  鍵盤鎖定，防止連續按太多下
         private Random rand;        //亂數產生器
         private bool isTeaching;    //是否是教學模式 is Teach Mode?
         private bool canWave;        //被攻擊時畫面是否會震動 when you be attacked, does the picturebox wave
@@ -106,7 +108,8 @@ namespace My3DMaze
             _hp.ForeColor = Color.Snow;
             _status.ForeColor = Color.Snow;
             _position3d.ForeColor = Color.Snow;
-
+            //鍵盤鎖定
+            keyLock = new CoolDownTime(100);
             //亂數產生器
             rand = new Random();
 
@@ -592,7 +595,10 @@ namespace My3DMaze
         //鍵盤控制
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            
+            if (keyLock.isCoolDown()) return;
+
+            keyLock.record();
+
             if (!(isWin || isLose) && !isLock)
             {
 
