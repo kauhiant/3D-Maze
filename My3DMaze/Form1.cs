@@ -584,6 +584,7 @@ namespace My3DMaze
                 {
                     isLose = true;
                     _status.Text = "YOU LOSE";
+                    _status.Font = new Font("微軟正黑體", 60);
                     timer1.Enabled = false;
                 }
             }
@@ -703,6 +704,7 @@ namespace My3DMaze
             if (isWin)
             {
                 _status.Text = "YOU WIN";
+                _status.Font = new Font("微軟正黑體",60);
                 timer1.Enabled = false;
             }
             //exit
