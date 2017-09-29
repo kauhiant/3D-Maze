@@ -113,8 +113,11 @@
             this.ClientSize = new System.Drawing.Size(630, 407);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximizeBox = false;
             this.Name = "Form4";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "遊戲說明";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
