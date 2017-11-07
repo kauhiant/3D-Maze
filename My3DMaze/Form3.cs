@@ -31,7 +31,7 @@ namespace My3DMaze
         //休閒模式
         private void button5_Click(object sender, EventArgs e)
         {
-            Form1 gameForm = new Form1(128, mapSize, 16, 0.45, MExp * B, MExp * R, 4,false,"休閒模式");
+            Form1 gameForm = new Form1(128, mapSize, 64, 0.45, MExp * B, MExp * R, 4,false,"休閒模式");
             gameForm.Show();
         }
         //拆牆模式
@@ -49,7 +49,7 @@ namespace My3DMaze
         //迷宮模式
         private void button3_Click(object sender, EventArgs e)
         {
-            Form1 gameForm = new Form1(128, mapSize, 128, 0.45, MExp * B, MExp * R, 4,false,"迷宮模式");
+            Form1 gameForm = new Form1(128, mapSize, 1024, 0.45, MExp * B, MExp * R, 4,false,"迷宮模式");
             gameForm.Show();
         }
 
@@ -84,7 +84,7 @@ namespace My3DMaze
         //教學模式
         private void button8_Click(object sender, EventArgs e)
         {
-            Form1 gameForm = new Form1(128, 32, 16, 0.45, 0, 0, 4,true,"教學模式");
+            Form1 gameForm = new Form1(128, 32, 64, 0.45, 0, 0, 4,true,"教學模式");
             gameForm.Show();
         }
     }

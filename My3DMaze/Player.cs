@@ -112,13 +112,9 @@ namespace My3DMaze
         {
             if (energy > healthPoint / 2)
             {
-                energy /= 2;
-                healthPoint+=rand.Next(1,energy);
+                healthPoint += energy/4;
             }
-            else
-            {
-                energy /= 2;
-            }
+            energy /= 2;
         }
 
         //依字串決定要往哪個方向移動一步 在地圖上

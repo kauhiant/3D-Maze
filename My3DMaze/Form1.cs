@@ -366,15 +366,13 @@ namespace My3DMaze
         //--draw assit map
         //畫出輔助地圖
         private void drawAssitMap()
-        {
-            int aph = 255 / grid_hard; ;   //透明度 grid血越薄越透明
-            
+        {   
             //--draw grid wall-- 畫出牆壁
             for (int j = 0; j < sField; j++)
                 for (int i = 0; i < sField; i++)
-                {
-                    draw2DMap(i, j, Color.Black, smapUp[i, j] * aph, ref assistMapUp, asMapGraph_size, sField);
-                    draw2DMap(i, j, Color.Black, smapDown[i, j] * aph, ref assistMapDown, asMapGraph_size, sField);
+                {   //透明度 grid血越薄越透明
+                    draw2DMap(i, j, Color.Black, smapUp[i, j] * 255 / grid_hard, ref assistMapUp, asMapGraph_size, sField);
+                    draw2DMap(i, j, Color.Black, smapDown[i, j] * 255 / grid_hard, ref assistMapDown, asMapGraph_size, sField);
                 }
             
             //--draw your position-- 畫出你的對照位置
@@ -382,8 +380,8 @@ namespace My3DMaze
             draw2DMap(sField / 2, sField / 2, Color.Green, 200, ref assistMapDown, asMapGraph_size, sField);
             
             //--draw each monster-- 畫出怪物
-            drawEachMonster(sField, aph, you.getPlane(), ref assistMapUp, -1);
-            drawEachMonster(sField, aph, you.getPlane(), ref assistMapDown, 1);
+            drawEachMonster(sField, 255, you.getPlane(), ref assistMapUp, -1);
+            drawEachMonster(sField, 255, you.getPlane(), ref assistMapDown, 1);
         }
 
         //Draw nmap data on Bitmap
@@ -429,7 +427,6 @@ namespace My3DMaze
         //畫牆壁
         private void drawGridWall()
         {
-            int aph = 255 / grid_hard;  //牆壁越薄 越透明  
             int toFix = field / 2;  //center of small map 
             int a = 0, b = 0;       //small map (x,y)
             
@@ -440,8 +437,9 @@ namespace My3DMaze
                 {
                     //是否超出邊界
                     if (i < nmap.GetLength(0) && j < nmap.GetLength(1)
-                        && i >= 0 && j >= 0)
-                        draw2DMap(a, b, Color.Black, nmap[i, j] * aph, ref mapGraph, graph_size, field);
+                        && i >= 0 && j >= 0)    
+                        //牆壁越薄 越透明 .
+                        draw2DMap(a, b, Color.Black, (nmap[i, j] * 255 / grid_hard), ref mapGraph, graph_size, field);
                     else
                         draw2DMap(a, b, Color.Black, 0, ref mapGraph, graph_size, field);
                     a++;

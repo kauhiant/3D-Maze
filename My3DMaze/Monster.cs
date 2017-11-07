@@ -63,7 +63,6 @@ namespace My3DMaze
         public void addBonus(int n) { bonus += n; }
         public void addHP(int n) {
             HP += n;
-            trackRange+=n;
             if (HP < 0) //如果HP低於零就歸零
                 HP = 0;
         }
@@ -72,7 +71,7 @@ namespace My3DMaze
             switch (type)
             {
                 case 'P':
-                    power = 2; attackRange = 2; trackRange = 4;
+                    power = 2; attackRange = 2; trackRange = 8;
                     bonus = 10;
                     break;
                 case 'B':
@@ -80,7 +79,7 @@ namespace My3DMaze
                     bonus = 10;
                     break;
                 case 'R':
-                    power = 2; attackRange = 1; trackRange = 4;
+                    power = 2; attackRange = 1; trackRange = 8;
                     bonus = 1;
                     break;
                 case 'D':
@@ -93,13 +92,13 @@ namespace My3DMaze
         //根據方向在地圖上移動 也可以追擊玩家
         public void move(int[,,] map, Player A)
         {
-            int vect=0;
-            if (trackRange != 0)  //如果會追蹤或是會逃跑
-                vect = track(A,trackRange);
-
+            if (trackRange == 0)
+                return;//如果不會追蹤(移動)
+            
             if(!isDead())   //怪物還沒死 (這行應該能刪掉)
                 if(type != 'B')
                 {
+                    int vect = track(A, trackRange);
                     switch (vect)   //根據方向數決定走哪裡
                     {
                         case 1:
@@ -133,6 +132,7 @@ namespace My3DMaze
         public int track(Player A, int trackRange)
         {
             int vect = rand.Next(-3,4);   //方向 [1:X方向 2:Y方向 3:Z方向]
+            if (trackRange < 0) return -1 * vect;
             //在追蹤範圍內--還能改更好--
             if (Math.Abs(A.getX() - x) < Math.Abs(trackRange) &&
                 Math.Abs(A.getY() - y) < Math.Abs(trackRange) &&
@@ -153,8 +153,8 @@ namespace My3DMaze
                             break;
                     }
 
-            if (trackRange < 0) return -1 * vect;
-            else return vect;
+            
+            return vect;
         }
 
         //攻擊玩家
@@ -215,6 +215,7 @@ namespace My3DMaze
         //怪物成長
         public void growUp(Monster A)
         {
+            addTrackRange(1);
             addBonus(A.getBonus());
             addPower(A.getPower());
             addHP(1);
