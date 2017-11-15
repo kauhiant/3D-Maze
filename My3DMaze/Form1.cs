@@ -308,13 +308,13 @@ namespace My3DMaze
                     switch (you.getPlane())     //在哪個平面建立
                     {
                         case "x":
-                            nmap[i, j] = map[you.getX(), i, j];
+                            nmap[i, j] = map[you.X, i, j];
                             break;
                         case "y":
-                            nmap[i, j] = map[j, you.getY(), i];
+                            nmap[i, j] = map[j, you.Y, i];
                             break;
                         case "z":
-                            nmap[i, j] = map[i, j, you.getZ()];
+                            nmap[i, j] = map[i, j, you.Z];
                             break;
                     }
 
@@ -342,17 +342,17 @@ namespace My3DMaze
                         switch (you.getPlane())
                         {
                             case "x":
-                                smapUp[i + sFix, j + sFix] = map[you.getX() - 1, you.getA() + i, you.getB() + j];
-                                smapDown[i + sFix, j + sFix] = map[you.getX() + 1, you.getA() + i, you.getB() + j];
+                                smapUp[i + sFix, j + sFix] = map[you.X - 1, you.getA() + i, you.getB() + j];
+                                smapDown[i + sFix, j + sFix] = map[you.X + 1, you.getA() + i, you.getB() + j];
                                 break;
                             case "y":
 
-                                smapUp[i + sFix, j + sFix] = map[you.getB() + j, you.getY() - 1, you.getA() + i];
-                                smapDown[i + sFix, j + sFix] = map[you.getB() + j, you.getY() + 1, you.getA() + i];
+                                smapUp[i + sFix, j + sFix] = map[you.getB() + j, you.Y - 1, you.getA() + i];
+                                smapDown[i + sFix, j + sFix] = map[you.getB() + j, you.Y + 1, you.getA() + i];
                                 break;
                             case "z":
-                                smapUp[i + sFix, j + sFix] = map[you.getA() + i, you.getB() + j, you.getZ() - 1];
-                                smapDown[i + sFix, j + sFix] = map[you.getA() + i, you.getB() + j, you.getZ() + 1];
+                                smapUp[i + sFix, j + sFix] = map[you.getA() + i, you.getB() + j, you.Z - 1];
+                                smapDown[i + sFix, j + sFix] = map[you.getA() + i, you.getB() + j, you.Z + 1];
                                 break;
                         }
                     //超出邊界 都設定為 0
@@ -542,9 +542,9 @@ namespace My3DMaze
                 int z = monsterList[i].getZ();
                 
                 //is near by you ?
-                if (x - 1 <= you.getX() && you.getX() <= x + 1 &&
-                y - 1 <= you.getY() && you.getY() <= y + 1 &&
-                z - 1 <= you.getZ() && you.getZ() <= z + 1)
+                if (x - 1 <= you.X && you.X <= x + 1 &&
+                y - 1 <= you.Y && you.Y <= y + 1 &&
+                z - 1 <= you.Z && you.Z <= z + 1)
                 {
                     monsterList[i].addHP(-1*you.getPower());
                     
@@ -858,7 +858,7 @@ namespace My3DMaze
             }
             else if (!isKillRed && monsterList.Count == 1)
             {
-                monsterList.Add(new Monster('R', you.getX(), you.getY(), you.getZ() + 1));
+                monsterList.Add(new Monster('R', you.X, you.Y, you.Z + 1));
                 creat2DMap();
                 showInfo();
                 timer1.Enabled = false;
@@ -886,7 +886,7 @@ namespace My3DMaze
             }
             else if (!isKillBlue && monsterList.Count == 1)
             {
-                monsterList.Add(new Monster('B', you.getX()+2, you.getY()+2, you.getZ() + 2));
+                monsterList.Add(new Monster('B', you.X+2, you.Y+2, you.Z + 2));
                 creat2DMap();
                 showInfo();
                 timer1.Enabled = false;

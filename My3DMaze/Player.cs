@@ -13,14 +13,15 @@ namespace My3DMaze
 
         int healthPoint, power, energy; //血量、力量、能量
         string plane;   //你的視角在哪個平面 "x" or "y" or "z"
-        int x, y, z;    //座標 你的位置
+        //int x, y, z;    //座標 你的位置
+        public Point3D location { get; private set; }
         int score;      //分數
 
         //初始化 
         public Player(int x=0,int y=0,int z=0,string p="z",int hp=15)
         {
             score = 0;
-            this.x = x;  this.y = y;  this.z = z;
+            location = new Point3D(x, y, z);
             plane = p;
             healthPoint = hp;
             energy = healthPoint*energyPow; //初始能量和血量的關係
@@ -34,9 +35,9 @@ namespace My3DMaze
         public int getScore() { return score; }
 
         public string getPlane() { return plane; }
-        public int getX() { return x; }
-        public int getY() { return y; }
-        public int getZ() { return z; }
+        public int X { get { return location.x; } }
+        public int Y { get { return location.y; } }
+        public int Z { get { return location.z; } }
 
         //在哪個平面
         public int get(string c)
@@ -45,13 +46,13 @@ namespace My3DMaze
             {
                 case "x":
                 case "X":
-                    return x;
+                    return location.x;
                 case "y":
                 case "Y":
-                    return y;
+                    return location.y;
                 case "z":
                 case "Z":
-                    return z;
+                    return location.z;
                 default:
                     return -1;
             }
@@ -60,23 +61,23 @@ namespace My3DMaze
         //在視角平面上的二維座標
         public int getA()
         {
-            if (plane == "x") return y;
-            else if (plane == "y") return z;
-            else if (plane == "z") return x;
+            if (plane == "x") return location.y;
+            else if (plane == "y") return location.z;
+            else if (plane == "z") return location.x;
             else return 0;
         }
         public int getB()
         {
-            if (plane == "x") return z;
-            else if (plane == "y") return x;
-            else if (plane == "z") return y;
+            if (plane == "x") return location.z;
+            else if (plane == "y") return location.x;
+            else if (plane == "z") return location.y;
             else return 0;
         }
         
         //輸出位置字串
         public string showPoint()
         {
-            return "x=" + x + ", y=" + y + ", z=" + z;
+            return location.ToString();
         }
         
         //增加或減少能量
@@ -120,49 +121,57 @@ namespace My3DMaze
         //依字串決定要往哪個方向移動一步 在地圖上
         public bool move(string udlr, ref int[,,] map, ref int[,] nmap, int map_size)
         {
+            Point2D point2D = new Point2D(0, 0);
             switch (plane)
             {
+                
                 case "x":
-                    mmove(ref y, ref z, udlr, ref nmap);
+                    point2D.set(Y, Z);
+                    mmove(point2D, udlr, ref nmap);
+                    this.location.setPoint(X , point2D.X , point2D.Y);
                     break;
                 case "y":
-                    mmove(ref z, ref x, udlr, ref nmap);
+                    point2D.set(Z, X);
+                    mmove(point2D, udlr, ref nmap);
+                    this.location.setPoint(point2D.Y , Y , point2D.X);
                     break;
                 case "z":
-                    mmove(ref x, ref y, udlr, ref nmap);
+                    point2D.set(X, Y);
+                    mmove(point2D, udlr, ref nmap);
+                    this.location.setPoint(point2D.X , point2D.Y , Z);
                     break;
             }
             //是否走到邊界
             return
-                (x == 0 || y == 0 || z == 0 || x == map_size - 1 || y == map_size - 1 || z == map_size - 1);
+                (X == 0 || Y == 0 || Z == 0 || X == map_size - 1 || Y == map_size - 1 || Z == map_size - 1);
         }
         //二維視角移動 (a,b) a:往左方向 b:往下方向
-        private bool mmove(ref int a,ref int b,string udlr,ref int[,] nmap)
+        private bool mmove(Point2D location2D,string udlr,ref int[,] nmap)
         {
             switch (udlr)
             {
                 case "up":
-                    if (nmap[a, b - 1] == 0)    //判斷這一格能不能走 是牆壁還是路 能走就回傳TRUE
+                    if (nmap[location2D.X, location2D.Y - 1] == 0)    //判斷這一格能不能走 是牆壁還是路 能走就回傳TRUE
                     {
-                        b -= 1; return true;
+                        location2D.Y -= 1; return true;
                     }
                     break;
                 case "down":
-                    if (nmap[a, b + 1] == 0)
+                    if (nmap[location2D.X, location2D.Y + 1] == 0)
                     {
-                        b += 1; return true;
+                        location2D.Y += 1; return true;
                     }
                     break;
                 case "left":
-                    if (nmap[a - 1, b] == 0)
+                    if (nmap[location2D.X - 1, location2D.Y] == 0)
                     {
-                        a -= 1; return true;
+                        location2D.X -= 1; return true;
                     }  
                     break;
                 case "right":
-                    if (nmap[a + 1, b] == 0)
+                    if (nmap[location2D.X + 1, location2D.Y] == 0)
                     {
-                        a += 1; return true;
+                        location2D.X += 1; return true;
                     }
                     break;
             }
@@ -199,11 +208,11 @@ namespace My3DMaze
                 energy --;
                 //因為走到邊界遊戲就結束了沒辦法攻擊邊界外的空資料所以不設邊界條件
                 //以後更新可能要加邊界條件
-                for (int i = x - 1; i < x + 2; i++)
+                for (int i = X - 1; i < X + 2; i++)
                 {
-                    for (int j = y - 1; j < y + 2; j++)
+                    for (int j = Y - 1; j < Y + 2; j++)
                     {
-                        for (int k = z - 1; k < z + 2; k++)
+                        for (int k = Z - 1; k < Z + 2; k++)
                         {
                             map[i, j, k] -= power;  //攻擊牆壁
                             if (map[i, j, k] < 0) map[i, j, k] = 0; //如果牆壁生命小於0 那就歸零

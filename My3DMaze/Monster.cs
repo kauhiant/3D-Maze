@@ -8,10 +8,10 @@ namespace My3DMaze
 {
     class Monster
     {
-        int x, y, z;    //位置
-        int HP, power, attackRange, bonus;  //生命、力量、攻擊範圍、獎勵
+        protected int x, y, z;    //位置
+        protected int HP, power, attackRange, bonus;  //生命、力量、攻擊範圍、獎勵
         char type;  //型態 { R:紅怪物 B:藍怪物 P:復仇者 }
-        int trackRange; //追蹤範圍
+        protected int trackRange; //追蹤範圍
         Random rand = new Random(); //亂數產生器
 
         //初始化 T:怪物型態 [X,Y,Z]:在地圖上的位置
@@ -134,22 +134,22 @@ namespace My3DMaze
             int vect = rand.Next(-3,4);   //方向 [1:X方向 2:Y方向 3:Z方向]
             if (trackRange < 0) return -1 * vect;
             //在追蹤範圍內--還能改更好--
-            if (Math.Abs(A.getX() - x) < Math.Abs(trackRange) &&
-                Math.Abs(A.getY() - y) < Math.Abs(trackRange) &&
-                Math.Abs(A.getZ() - z) < Math.Abs(trackRange)   )
+            if (Math.Abs(A.X - x) < Math.Abs(trackRange) &&
+                Math.Abs(A.Y - y) < Math.Abs(trackRange) &&
+                Math.Abs(A.Z - z) < Math.Abs(trackRange)   )
                     switch (rand.Next(0, 3))    //隨機選一個向量判斷
                     {
                         case 0:
-                            if (A.getX() > x) vect = 1;
-                            if (A.getX() < x) vect = -1;
+                            if (A.X > x) vect = 1;
+                            if (A.X < x) vect = -1;
                             break;
                         case 1:
-                            if (A.getY() > y) vect = 2;
-                            if (A.getY() < y) vect = -2;
+                            if (A.Y > y) vect = 2;
+                            if (A.Y < y) vect = -2;
                             break;
                         case 2:
-                            if (A.getZ() > z) vect = 3;
-                            if (A.getZ() < z) vect = -3;
+                            if (A.Z > z) vect = 3;
+                            if (A.Z < z) vect = -3;
                             break;
                     }
 
@@ -161,9 +161,9 @@ namespace My3DMaze
         public bool attack(Player A)
         {
             if (!isDead())//這行應該也不用
-                if (Math.Abs(A.getX() - x) <= attackRange && //在攻擊範圍內
-                    Math.Abs(A.getY() - y) <= attackRange && 
-                    Math.Abs(A.getZ() - z) <= attackRange )
+                if (Math.Abs(A.X - x) <= attackRange && //在攻擊範圍內
+                    Math.Abs(A.Y - y) <= attackRange && 
+                    Math.Abs(A.Z - z) <= attackRange )
                 {
                     A.addHP(-1 * power);
                     return true;
