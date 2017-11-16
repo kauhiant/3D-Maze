@@ -12,13 +12,13 @@ namespace My3DMaze
         const int energyPow = 1;    //energy 和 HP 的比例
 
         int healthPoint, power, energy; //血量、力量、能量
-        string plane;   //你的視角在哪個平面 "x" or "y" or "z"
+        public Plane plane { get; private set; }   //你的視角在哪個平面 "x" or "y" or "z"
         //int x, y, z;    //座標 你的位置
         public Point3D location { get; private set; }
         int score;      //分數
 
         //初始化 
-        public Player(int x=0,int y=0,int z=0,string p="z",int hp=15)
+        public Player(int x=0,int y=0,int z=0,Plane p=Plane.Z,int hp=15)
         {
             score = 0;
             location = new Point3D(x, y, z);
@@ -34,25 +34,36 @@ namespace My3DMaze
         public int getEnergy() { return energy; }
         public int getScore() { return score; }
 
-        public string getPlane() { return plane; }
-        public int X { get { return location.x; } }
-        public int Y { get { return location.y; } }
-        public int Z { get { return location.z; } }
+       // public string getPlane() { return plane; }
+        public int X { get { return location.x.value; } }
+        public int Y { get { return location.y.value; } }
+        public int Z { get { return location.z.value; } }
 
         //在哪個平面
-        public int get(string c)
+        public string getPlaneString()
         {
-            switch (c)
+            switch (this.plane)
             {
-                case "x":
-                case "X":
-                    return location.x;
-                case "y":
-                case "Y":
-                    return location.y;
-                case "z":
-                case "Z":
-                    return location.z;
+                case Plane.X:
+                    return "X = " + location.x.value;
+                case Plane.Y:
+                    return "Y = " + location.y.value;
+                case Plane.Z:
+                    return "Z = " + location.z.value;
+                default:
+                    return "Null";
+            }
+        }
+        public int getPlaneValue()
+        {
+            switch (this.plane)
+            {
+                case Plane.X:
+                    return location.x.value;
+                case Plane.Y:
+                    return location.y.value;
+                case Plane.Z:
+                    return location.z.value;
                 default:
                     return -1;
             }
@@ -61,16 +72,16 @@ namespace My3DMaze
         //在視角平面上的二維座標
         public int getA()
         {
-            if (plane == "x") return location.y;
-            else if (plane == "y") return location.z;
-            else if (plane == "z") return location.x;
+            if (plane == Plane.X) return location.y.value;
+            else if (plane == Plane.Y) return location.z.value;
+            else if (plane == Plane.Z) return location.x.value;
             else return 0;
         }
         public int getB()
         {
-            if (plane == "x") return location.z;
-            else if (plane == "y") return location.x;
-            else if (plane == "z") return location.y;
+            if (plane == Plane.X) return location.z.value;
+            else if (plane == Plane.Y) return location.x.value;
+            else if (plane == Plane.Z) return location.y.value;
             else return 0;
         }
         
@@ -119,26 +130,22 @@ namespace My3DMaze
         }
 
         //依字串決定要往哪個方向移動一步 在地圖上
-        public bool move(string udlr, ref int[,,] map, ref int[,] nmap, int map_size)
+        public bool move(Vector2D udlr, ref int[,,] map, ref int[,] nmap, int map_size)
         {
             Point2D point2D = new Point2D(0, 0);
             switch (plane)
             {
-                
-                case "x":
-                    point2D.set(Y, Z);
+                case Plane.X:
+                    point2D.bind(location.y, location.z);
                     mmove(point2D, udlr, ref nmap);
-                    this.location.setPoint(X , point2D.X , point2D.Y);
                     break;
-                case "y":
-                    point2D.set(Z, X);
+                case Plane.Y:
+                    point2D.bind(location.z, location.x);
                     mmove(point2D, udlr, ref nmap);
-                    this.location.setPoint(point2D.Y , Y , point2D.X);
                     break;
-                case "z":
-                    point2D.set(X, Y);
+                case Plane.Z:
+                    point2D.bind(location.x, location.y);
                     mmove(point2D, udlr, ref nmap);
-                    this.location.setPoint(point2D.X , point2D.Y , Z);
                     break;
             }
             //是否走到邊界
@@ -146,36 +153,16 @@ namespace My3DMaze
                 (X == 0 || Y == 0 || Z == 0 || X == map_size - 1 || Y == map_size - 1 || Z == map_size - 1);
         }
         //二維視角移動 (a,b) a:往左方向 b:往下方向
-        private bool mmove(Point2D location2D,string udlr,ref int[,] nmap)
+        private bool mmove(Point2D location2D,Vector2D udlr,ref int[,] nmap)
         {
-            switch (udlr)
+            location2D.moveForward(udlr);
+            if (nmap[location2D.x, location2D.y] == 0)
+                return true;
+            else
             {
-                case "up":
-                    if (nmap[location2D.X, location2D.Y - 1] == 0)    //判斷這一格能不能走 是牆壁還是路 能走就回傳TRUE
-                    {
-                        location2D.Y -= 1; return true;
-                    }
-                    break;
-                case "down":
-                    if (nmap[location2D.X, location2D.Y + 1] == 0)
-                    {
-                        location2D.Y += 1; return true;
-                    }
-                    break;
-                case "left":
-                    if (nmap[location2D.X - 1, location2D.Y] == 0)
-                    {
-                        location2D.X -= 1; return true;
-                    }  
-                    break;
-                case "right":
-                    if (nmap[location2D.X + 1, location2D.Y] == 0)
-                    {
-                        location2D.X += 1; return true;
-                    }
-                    break;
+                location2D.moveBack(udlr);
+                return false;
             }
-            return false;
         }
         
 
@@ -195,9 +182,9 @@ namespace My3DMaze
             }
             switch (planeNumber)   
             {
-                case 0: plane = "x"; break;
-                case 1: plane = "y"; break;
-                case 2: plane = "z"; break;
+                case 0: plane = Plane.X; break;
+                case 1: plane = Plane.Y; break;
+                case 2: plane = Plane.Z; break;
             }
         }
 

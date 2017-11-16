@@ -179,35 +179,35 @@ namespace My3DMaze
         }
 
         //在plane平面上的座標 [A:左右向 B:上下向]
-        public int getA(string plane)
+        public int getA(Plane plane)
         {
-            if (plane == "x") return y;
-            else if (plane == "y") return z;
-            else if (plane == "z") return x;
+            if (plane == Plane.X) return y;
+            else if (plane == Plane.Y) return z;
+            else if (plane == Plane.Z) return x;
             else return 0;
         }
-        public int getB(string plane)
+        public int getB(Plane plane)
         {
-            if (plane == "x") return z;
-            else if (plane == "y") return x;
-            else if (plane == "z") return y;
+            if (plane == Plane.X) return z;
+            else if (plane == Plane.Y) return x;
+            else if (plane == Plane.Z) return y;
             else return 0;
         }
 
         //是否在(p = n)平面上 ex:("x" = 3)平面
-        public bool onPlane(string p,int n)
+        public bool onPlane(Plane p,int n)
         {
             switch (p)
             {
-                case "x":
-                case "X":
+                case Plane.X:
                     return x == n;
-                case "y":
-                case "Y":
+
+                case Plane.Y:
                     return y == n;
-                case "z":
-                case "Z":
+
+                case Plane.Z:
                     return z == n;
+
                 default:
                     return false;
             }

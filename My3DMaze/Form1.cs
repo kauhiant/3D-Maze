@@ -149,7 +149,7 @@ namespace My3DMaze
             
             //--創造你的角色 放置於地圖中央 Z平面 初始化血量--
             //create you and you are in center of the map
-            you = new Player(map_size / 2, map_size / 2, map_size / 2, "z", initHP);
+            you = new Player(map_size / 2, map_size / 2, map_size / 2, Plane.Z, initHP);
             
 
             //Create each monster by BMN RMN and place in random position
@@ -214,7 +214,7 @@ namespace My3DMaze
 
             //Vector[X,Y,Z] = Color[Red,Green,Blue]
             //向量視覺化 show two vector on [toRight , toBotom] of main picture
-            showIJK("z");
+            showIJK(Plane.Z);
             //平面視覺化 show vector on your plane [toInner]
             pictureBox1.BackColor = Color.FromArgb(100, Color.Blue);
             
@@ -238,7 +238,7 @@ namespace My3DMaze
             _score.Text =  "分數 : " + you.getScore();
             _energy.Text = "能量 : " + you.getEnergy();
             _power.Text =  "力量 : " + you.getPower();
-            _plane.Text = you.getPlane() + " = " + you.get(you.getPlane());
+            _plane.Text = you.getPlaneString();
 
             //center 主畫面 main picture
             _hp.Text = "HP : "+you.getHP();
@@ -248,8 +248,8 @@ namespace My3DMaze
             //show the plane of assist map
             if (canShowTwoMap)
             {
-                _smallPlaneUp.Text = you.getPlane() + " = " + (you.get(you.getPlane()) - 1);
-                _smallPlaneDown.Text = you.getPlane() + " = " + (you.get(you.getPlane()) + 1);
+    //            _smallPlaneUp.Text = you.getPlane() + " = " + (you.get(you.getPlane()) - 1);
+     //           _smallPlaneDown.Text = you.getPlane() + " = " + (you.get(you.getPlane()) + 1);
             }
             else
             {
@@ -265,24 +265,21 @@ namespace My3DMaze
         //Vector[X,Y,Z] = Color[Red,Green,Blue]
         //向量視覺化 show two vector on [toRight , toBotom] of main picture
         //refer [plane V] to show colorVector
-        private void showIJK(string V)  //V is a plane
+        private void showIJK(Plane plane)  //V is a plane
         {
-            switch (V)  //在哪個平面 標示顏色
+            switch (plane)  //在哪個平面 標示顏色
             {
-                case "i":
-                case "x":
+                case Plane.X:
                     _colorDown.BackColor = Color.FromArgb(0,0,255);
                     _colorRight.BackColor = Color.FromArgb(0,255,0);
                     pictureBox1.BackColor = Color.FromArgb(100, Color.Red);
                     break;
-                case "j":
-                case "y":
+                case Plane.Y:
                     _colorDown.BackColor = Color.FromArgb(255,0,0);
                     _colorRight.BackColor = Color.FromArgb(0,0,255);
                     pictureBox1.BackColor = Color.FromArgb(100, Color.Green);
                     break;
-                case "k":
-                case "z":
+                case Plane.Z:
                     _colorDown.BackColor = Color.FromArgb(0,255,0);
                     _colorRight.BackColor = Color.FromArgb(255,0,0);
                     pictureBox1.BackColor = Color.FromArgb(100, Color.Blue);
@@ -300,20 +297,20 @@ namespace My3DMaze
         //創造2維地圖
         private void creat2DMap()
         {
-            showIJK(you.getPlane());    //顯示輔助顏色
+            showIJK(you.plane);    //顯示輔助顏色
 
             //--參考3維地圖建立2維地圖--
             for (int i = 0; i < map_size; i++)
                 for (int j = 0; j < map_size; j++)
-                    switch (you.getPlane())     //在哪個平面建立
+                    switch (you.plane)     //在哪個平面建立
                     {
-                        case "x":
+                        case Plane.X:
                             nmap[i, j] = map[you.X, i, j];
                             break;
-                        case "y":
+                        case Plane.Y:
                             nmap[i, j] = map[j, you.Y, i];
                             break;
-                        case "z":
+                        case Plane.Z:
                             nmap[i, j] = map[i, j, you.Z];
                             break;
                     }
@@ -339,18 +336,18 @@ namespace My3DMaze
                     if (you.getA() + i >= 0 && you.getB() + j >= 0 &&
                        you.getA() + i < map_size && you.getB() + j < map_size)
                         //找出你的[視角]在哪個平面並建立[之上]與[之下]的資料
-                        switch (you.getPlane())
+                        switch (you.plane)
                         {
-                            case "x":
+                            case Plane.X:
                                 smapUp[i + sFix, j + sFix] = map[you.X - 1, you.getA() + i, you.getB() + j];
                                 smapDown[i + sFix, j + sFix] = map[you.X + 1, you.getA() + i, you.getB() + j];
                                 break;
-                            case "y":
+                            case Plane.Y:
 
                                 smapUp[i + sFix, j + sFix] = map[you.getB() + j, you.Y - 1, you.getA() + i];
                                 smapDown[i + sFix, j + sFix] = map[you.getB() + j, you.Y + 1, you.getA() + i];
                                 break;
-                            case "z":
+                            case Plane.Z:
                                 smapUp[i + sFix, j + sFix] = map[you.getA() + i, you.getB() + j, you.Z - 1];
                                 smapDown[i + sFix, j + sFix] = map[you.getA() + i, you.getB() + j, you.Z + 1];
                                 break;
@@ -380,8 +377,8 @@ namespace My3DMaze
             draw2DMap(sField / 2, sField / 2, Color.Green, 200, ref assistMapDown, asMapGraph_size, sField);
             
             //--draw each monster-- 畫出怪物
-            drawEachMonster(sField, 255, you.getPlane(), ref assistMapUp, -1);
-            drawEachMonster(sField, 255, you.getPlane(), ref assistMapDown, 1);
+            drawEachMonster(sField, 255, you.plane, ref assistMapUp, -1);
+            drawEachMonster(sField, 255, you.plane, ref assistMapDown, 1);
         }
 
         //Draw nmap data on Bitmap
@@ -407,7 +404,7 @@ namespace My3DMaze
             draw2DMap(toFix, toFix, Color.Green, aph,ref mapGraph, graph_size, field);
             
             //--Draw monsters--畫出怪物
-            drawEachMonster(field,aph,you.getPlane(),ref mapGraph);
+            drawEachMonster(field,aph,you.plane,ref mapGraph);
 
             //--Layout on pictureBox-- 
             //輸出          
@@ -465,7 +462,7 @@ namespace My3DMaze
         }
 
         //畫出每隻怪物
-        public void drawEachMonster(int size,int aph,string thisPlane,ref Bitmap mapGraph, int planeFix = 0)
+        public void drawEachMonster(int size,int aph,Plane thisPlane,ref Bitmap mapGraph, int planeFix = 0)
         {
             //-for each monster-
             int a = 0, b = 0;
@@ -473,7 +470,7 @@ namespace My3DMaze
             for (int index = 0; index < monsterList.Count; index++)
             {
                 //是否跟玩家在同一平面 或修正後的平面
-                if (monsterList[index].onPlane(you.getPlane(), you.get(you.getPlane()) + planeFix))
+                if (monsterList[index].onPlane(you.plane, you.getPlaneValue()+planeFix))
                 {
                     b = 0;
                     int startA = you.getA() - toFix;
@@ -605,25 +602,25 @@ namespace My3DMaze
                 {
                     case Keys.W:
                     case Keys.Up:
-                        isWin = you.move("up",ref map,ref nmap,map_size);
+                        isWin = you.move(Vector2D.Up,ref map,ref nmap,map_size);
                         if (indexTeach == 0) indexTeach++;
                         creat2DMap();
                         break;
                     case Keys.S:
                     case Keys.Down:
-                        isWin = you.move("down",ref map, ref nmap,map_size);
+                        isWin = you.move(Vector2D.Down,ref map, ref nmap,map_size);
                         if (indexTeach == 0) indexTeach++;
                         creat2DMap();
                         break;
                     case Keys.A:
                     case Keys.Left:
-                        isWin = you.move("left",ref map,ref nmap, map_size);
+                        isWin = you.move(Vector2D.Left,ref map,ref nmap, map_size);
                         if (indexTeach == 0) indexTeach++;
                         creat2DMap();
                         break;
                     case Keys.D:
                     case Keys.Right:
-                        isWin = you.move("right",ref map, ref nmap,map_size);
+                        isWin = you.move(Vector2D.Right,ref map, ref nmap,map_size);
                         if (indexTeach == 0) indexTeach++;
                         creat2DMap();
                         break;

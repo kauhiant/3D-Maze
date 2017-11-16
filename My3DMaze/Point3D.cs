@@ -6,38 +6,37 @@ using System.Threading.Tasks;
 
 namespace My3DMaze
 {
+    public enum Vector3D { Xplus, Xsub, Yplus, Ysub, Zplus, Zsub }
+
     class Point3D
     {
         //軸
-        public int x { get; private set; }
-        public int y { get; private set; }
-        public int z { get; private set; }
+        public Point1D x { get; private set; }
+        public Point1D y { get; private set; }
+        public Point1D z { get; private set; }
+
+        public int X { get { return x.value; } }
+        public int Y { get { return y.value; } }
+        public int Z { get { return z.value; } }
         //平面
         public Point2D plane;
 
         public Point3D(int x,int y,int z)
         {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public void setPoint(int x=0,int y=0,int z = 0)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.x = new Point1D(x);
+            this.y = new Point1D(y);
+            this.z = new Point1D(z);
         }
 
         public int distanceTo(Point3D target)
         {
             int tmp = 0;
             int min = int.MaxValue;
-            tmp = Math.Abs(this.x - target.x) ;
+            tmp = this.x.distanceTo(target.x) ;
             min = min < tmp ? min : tmp;
-            tmp = Math.Abs(this.y - target.y);
+            tmp = this.y.distanceTo(target.y);
             min = min < tmp ? min : tmp;
-            tmp = Math.Abs(this.z - target.z);
+            tmp = this.z.distanceTo(target.z);
             min = min < tmp ? min : tmp;
 
             return min;
@@ -50,18 +49,38 @@ namespace My3DMaze
 
         public bool inRangeX(int a,int b)
         {
-            if(a == b)
-            {
-                if (x == a) return true;
-                else return false;
-            }
-            else if (a < b)
-            {
-                int tmp = a;
-                a = b;
-                b = tmp;
-            }
-            return (x >= a && x <= b);
+            return this.x.inRange(a, b);
         }
+
+        public void moveForward(Vector3D vector ,int distance)
+        {
+            switch (vector)
+            {
+                case Vector3D.Xplus:
+                    x.add(distance);
+                    break;
+
+                case Vector3D.Xsub:
+                    x.add(-distance);
+                    break;
+
+                case Vector3D.Yplus:
+                    y.add(distance);
+                    break;
+
+                case Vector3D.Ysub:
+                    y.add(-distance);
+                    break;
+
+                case Vector3D.Zplus:
+                    z.add(distance);
+                    break;
+
+                case Vector3D.Zsub:
+                    z.add(-distance);
+                    break;
+            }
+        }
+        
     }
 }

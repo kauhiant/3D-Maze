@@ -75,6 +75,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Point1D.cs" />
     <Compile Include="Point2D.cs" />
     <Compile Include="Point3D.cs" />
     <Compile Include="Program.cs" />
