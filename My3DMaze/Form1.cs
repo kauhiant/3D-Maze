@@ -190,7 +190,7 @@ namespace My3DMaze
             
             //Creat bitmap of 2D Map
             //創造2維地圖的 Bitmap
-            mapGraph = new Bitmap(graph_size, graph_size);
+            mapGraph = new Bitmap(graph_size/8, graph_size/8);
 
             //Creat storage of 2D map
             //創造2維地圖的資料空間

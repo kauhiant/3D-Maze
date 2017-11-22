@@ -51,29 +51,24 @@ namespace My3DMaze
 
         public void drawOn(MapGraph graph , Point2D showedCenter , int showedSize)
         {
-            Range1D XRange = new Range1D(showedCenter.x - showedSize, showedCenter.x + showedSize);
-            Range1D YRange = new Range1D(showedCenter.y - showedSize, showedCenter.y + showedSize);
             int maxSize = showedSize * 2 + 1;
             graph.setGrid(maxSize);
+            Color color;
 
-            for(int i = 0; i < maxSize; ++i)
+            for (int i = 0; i < maxSize; ++i)
             {
-                int mapX = XRange.minValue + i;
+                int mapX = showedCenter.x - showedSize + i;
                 for(int j = 0; j < maxSize; ++j)
                 {
-                    int mapY = YRange.minValue + j;
-                    if(mapX >= nmap.GetLength(0) || mapY >= nmap.GetLength(1) || mapX < 0 || mapY < 0)
-                    {
-                        Console.WriteLine("over {0},{1}",mapX,mapY);
-                        continue;
-                    }
-                    
-                    Color color = Color.FromArgb(nmap[mapX,mapY], Color.Black);
+                    int mapY = showedCenter.y - showedSize + j;
+                    if (mapX >= nmap.GetLength(0) || mapY >= nmap.GetLength(1) || mapX < 0 || mapY < 0)
+                        color = Color.Transparent;
+                    else
+                        color = Color.FromArgb(nmap[mapX, mapY] * 255 / refrenceMap.grid_hard, Color.Black);
+
                     graph.drawGrid(i, j, color);
                 }
             }
-
-            graph.drawGrid(showedCenter.x+1, showedCenter.y+1, Color.Red);
         }
     }
 }

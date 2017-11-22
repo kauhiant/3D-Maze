@@ -21,7 +21,7 @@ namespace My3DMaze
         public MapGraph(PictureBox scene)
         {
             this.scene = scene;
-            this._graph = new Bitmap(scene.Width, scene.Height);
+            this._graph = new Bitmap(scene.Width/4, scene.Height/4);
             this.graph = Graphics.FromImage(_graph);
         }
 
@@ -29,8 +29,8 @@ namespace My3DMaze
         {
             this.divX = divBase;
             this.divY = divBase;
-            this.gridX = scene.Width / divX;
-            this.gridY = scene.Height / divY;
+            this.gridX = _graph.Width / divX;
+            this.gridY = _graph.Height / divY;
         }
 
         public void setGrid(int divX,int divY)

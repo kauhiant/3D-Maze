@@ -30,6 +30,23 @@ namespace My3DMaze
 
         private Point3D binded;
         public Plane plane { get; private set; }
+        public int planeValue
+        {
+            get
+            {
+                switch (plane)
+                {
+                    case Plane.X:
+                        return binded.X;
+                    case Plane.Y:
+                        return binded.Y;
+                    case Plane.Z:
+                        return binded.Z;
+                    default:
+                        return -1;
+                }
+            }
+        }
 
         public Point2D(int X, int Y)
         {

@@ -12,44 +12,61 @@ namespace My3DMaze
 {
     public partial class ForTest : Form
     {
+        Point3D location3d;
+        Map3D mainMap;
+        Point2D location;
         MapGraph test;
-        int[,] mainMap;
         Map2D map;
-        int count = 0;
         public ForTest()
         {
             InitializeComponent();
-            mainMap = new int[64,64];
-            for(int i=0;i<64;++i)
-                for(int j = 0; j < 64; ++j)
-                {
-                    if(i%3==j%3)
-                    mainMap[i, j] = 200;
-                }
+            mainMap = new Map3D(64,200,0.5);
+            location3d = new Point3D(32,32,32);
 
+            map = new Map2D(mainMap);
+            location = new Point2D(32,32);
+
+            location.bindWith(location3d, Plane.Z);
 
             test = new MapGraph(pictureBox1);
-            map = new Map2D(mainMap);
             pictureBox1.BackColor = Color.Green;
-            
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            test.drawGrid(count, count, Color.Red);
-            count++;
+            map.drawOn(test, location, 5);
             test.update();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        
+
+        private void ForTest_KeyDown(object sender, KeyEventArgs e)
         {
-            Point2D tmp = new Point2D(0, count + 30);
-            Text = tmp.ToString();
-            button1.Text = (count + 30).ToString();
-            map.drawOn(test, tmp, 5);
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                    location.moveForward(Vector2D.Up);
+                    break;
+                case Keys.Down:
+                    location.moveForward(Vector2D.Down);
+                    break;
+                case Keys.Left:
+                    location.moveForward(Vector2D.Left);
+                    break;
+                case Keys.Right:
+                    location.moveForward(Vector2D.Right);
+                    break;
+
+                case Keys.X:
+                    map.creat2DMapOn(Plane.X, location.planeValue);
+                    break;
+                case Keys.Y:
+                    map.creat2DMapOn(Plane.Y, location.planeValue);
+                    break;
+                case Keys.Z:
+                    map.creat2DMapOn(Plane.Z, location.planeValue);
+                    break;
+            }
+
+            map.drawOn(test, location, 5);
+            Text = location.ToString();
             test.update();
-            ++count;
         }
     }
 }
