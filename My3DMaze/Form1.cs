@@ -62,7 +62,7 @@ namespace My3DMaze
         private int[,] smapUp;          //右邊小地圖的資料 the data of assistMapUp
         private int[,] smapDown;        //同上the data of assistMapDown
         private int sField = 5;         //小地圖的field  The field of assist map 
-        private int asMapGraph_size;    //size of assistMap
+        private int asMapGraph_size;    //showed size of assistMap
 
         //Data of player and monster
         private int initHP;                 //初始血量
@@ -126,6 +126,10 @@ namespace My3DMaze
             initHP = _HP;
             BMN = _BN;
             RMN = _RN;
+
+            //Const 設定
+            Range1D tmpRange = new Range1D(map_size);
+            Const.mazeRange = new Range3D(tmpRange , tmpRange , tmpRange);
 
             //for modify resolution
             grid_dens = _graphDens;
@@ -235,13 +239,13 @@ namespace My3DMaze
         {
             //right 右邊資訊表
             _monsters.Text="剩餘怪物 : " + monsterList.Count;
-            _score.Text =  "分數 : " + you.getScore();
-            _energy.Text = "能量 : " + you.getEnergy();
-            _power.Text =  "力量 : " + you.getPower();
+            _score.Text =  "分數 : " + you.score;
+            _energy.Text = "能量 : " + you.energy;
+            _power.Text =  "力量 : " + you.power;
             _plane.Text = you.getPlaneString();
 
             //center 主畫面 main picture
-            _hp.Text = "HP : "+you.getHP();
+            _hp.Text = "HP : "+you.HP;
             _position3d.Text = you.showPoint();
 
             //輔助小地圖的平面
@@ -305,13 +309,13 @@ namespace My3DMaze
                     switch (you.plane)     //在哪個平面建立
                     {
                         case Plane.X:
-                            nmap[i, j] = map[you.X, i, j];
+                            nmap[i, j] = map[you.location.X, i, j];
                             break;
                         case Plane.Y:
-                            nmap[i, j] = map[j, you.Y, i];
+                            nmap[i, j] = map[j, you.location.Y, i];
                             break;
                         case Plane.Z:
-                            nmap[i, j] = map[i, j, you.Z];
+                            nmap[i, j] = map[i, j, you.location.Z];
                             break;
                     }
 
@@ -333,8 +337,7 @@ namespace My3DMaze
             for (int i = -1 * sFix; i < (sField - sFix); i++)
                 for (int j = -1 * sFix; j < (sField - sFix); j++)
                     //沒有超出邊界
-                    if (you.getA() + i >= 0 && you.getB() + j >= 0 &&
-                       you.getA() + i < map_size && you.getB() + j < map_size)
+                    if (you.location.inRange(Const.mazeRange) || you.location.onEdge(Const.mazeRange))
                         //找出你的[視角]在哪個平面並建立[之上]與[之下]的資料
                         switch (you.plane)
                         {
@@ -398,7 +401,7 @@ namespace My3DMaze
             drawGridWall();
             
             //--Draw your character--畫出你的角色
-            aph =150 + you.getHP() * 8;
+            aph =150 + you.HP * 8;
             if (aph > 255) aph = 255;
             if (aph == 150) aph = 0;
             draw2DMap(toFix, toFix, Color.Green, aph,ref mapGraph, graph_size, field);
@@ -543,7 +546,7 @@ namespace My3DMaze
                 y - 1 <= you.Y && you.Y <= y + 1 &&
                 z - 1 <= you.Z && you.Z <= z + 1)
                 {
-                    monsterList[i].addHP(-1*you.getPower());
+                    monsterList[i].addHP(-1*you.power);
                     
                     //is monster dead
                     if (monsterList[i].isDead())
@@ -575,7 +578,7 @@ namespace My3DMaze
 
                 if (monsterList[i].attack(you))
                     graphWave();
-                if (you.getHP() == 0)
+                if (you.HP == 0)
                 {
                     isLose = true;
                     _status.Text = "YOU LOSE";
@@ -848,7 +851,7 @@ namespace My3DMaze
                 "也有機會獲的額外獎勵"+ Environment.NewLine+
                 "現在就去消滅紅怪物吧" + Environment.NewLine ;
             
-            if (you.getScore() != 0)
+            if (you.score != 0)
             {
                 isKillRed = true;
                 indexTeach++;
@@ -876,7 +879,7 @@ namespace My3DMaze
                 "現在就去把它找出來並消滅掉" + Environment.NewLine +
                 "殺死他的獎勵可是紅怪物的十倍呢" + Environment.NewLine;
             
-            if (you.getScore() != 1)
+            if (you.score != 1)
             {
                 isKillBlue = true;
                 indexTeach++;

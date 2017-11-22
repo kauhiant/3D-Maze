@@ -16,7 +16,11 @@ namespace My3DMaze
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form3());
+            // Application.Run(new Form3());
+
+
+            //ForTest
+            Application.Run(new ForTest());
         }
     }
 }

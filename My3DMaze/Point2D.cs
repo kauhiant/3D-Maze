@@ -8,6 +8,17 @@ namespace My3DMaze
 {
     public enum Plane { X, Y, Z }
     public enum Vector2D { Up, Down, Left, Right , Null}
+
+    class Range2D
+    {
+        public Range1D xRange { get; private set; }
+        public Range1D yRange { get; private set; }
+        public Range2D(Range1D xRange, Range1D yRange)
+        {
+            this.xRange = xRange;
+            this.yRange = yRange;
+        }
+    }
     
     class Point2D
     {
@@ -86,6 +97,11 @@ namespace My3DMaze
                     this.X.add(-distance);
                     break;
             }
+        }
+
+        public bool inRange(Range2D range)
+        {
+            return (this.X.inRange(range.xRange) && this.Y.inRange(range.yRange));
         }
 
 

@@ -36,3 +36,4 @@ D:\文件\Visual Studio 2015\Projects\3D_Maze\My3DMaze\obj\Debug\3DMaze.csproj.G
 D:\文件\00程式and功課\Visual Studio 2015\Projects\3D_Maze\My3DMaze\bin\Debug\3D_Maze_I.exe.config
 D:\文件\00程式and功課\Visual Studio 2015\Projects\3D_Maze\My3DMaze\obj\Debug\3D_Maze_I.exe
 D:\文件\00程式and功課\Visual Studio 2015\Projects\3D_Maze\My3DMaze\obj\Debug\3D_Maze_I.pdb
+D:\文件\Visual Studio 2015\Projects\3D_Maze\My3DMaze\obj\Debug\My3DMaze.ForTest.resources

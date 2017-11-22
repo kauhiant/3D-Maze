@@ -6,6 +6,29 @@ using System.Threading.Tasks;
 
 namespace My3DMaze
 {
+    class Range1D
+    {
+        public int minValue { get; private set; }
+        public int maxValue { get; private set; }
+        public Range1D(int leftVal, int rightVal)
+        {
+            if (rightVal > leftVal)
+            {
+                int tmp = rightVal;
+                rightVal = leftVal;
+                leftVal = tmp;
+            }
+            this.minValue = leftVal;
+            this.maxValue = rightVal;
+        }
+
+        public Range1D(int size)
+        {
+            this.minValue = 0;
+            this.maxValue = size - 1;
+        }
+    }
+
     class Point1D
     {
         public int value{ get; private set; }
@@ -38,6 +61,16 @@ namespace My3DMaze
                 b = tmp;
             }
             return (value >= a && value <= b);
+        }
+        //不包括邊緣
+        public bool inRange(Range1D range)
+        {
+            return (this.value > range.minValue && this.value < range.maxValue);
+        }
+        //在邊緣上
+        public bool onEdge(Range1D range)
+        {
+            return (this.value == range.minValue || this.value == range.maxValue);
         }
 
         public override string ToString()
