@@ -37,6 +37,11 @@ namespace My3DMaze
             this.value = value;
         }
 
+        public void set(int value)
+        {
+            this.value = value;
+        }
+
         public void add(int value)
         {
             this.value += value;
@@ -62,10 +67,10 @@ namespace My3DMaze
             }
             return (value >= a && value <= b);
         }
-        //不包括邊緣
+        //包括邊緣
         public bool inRange(Range1D range)
         {
-            return (this.value > range.minValue && this.value < range.maxValue);
+            return (this.value >= range.minValue && this.value <= range.maxValue);
         }
         //在邊緣上
         public bool onEdge(Range1D range)

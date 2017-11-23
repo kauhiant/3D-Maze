@@ -81,5 +81,10 @@ namespace My3DMaze
 
             graph.DrawImage(img, x, y);
         }
+
+        public void backColorTo(Color color)
+        {
+            scene.BackColor = color;
+        }
     }
 }

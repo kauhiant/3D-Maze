@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace My3DMaze
 {
@@ -24,14 +19,32 @@ namespace My3DMaze
 
         public Map2D(int[,] refrenceMap)
         {
-           // this.refrenceMap = refrenceMap;
             this.map_size = refrenceMap.GetLength(0);
             this.nmap = refrenceMap;
         }
-
         //創造2維地圖
-        public void creat2DMapOn(Plane plane,int value)
+        public bool creatMap(Point3D location,Plane plane)
         {
+            if (refrenceMap == null) return false;
+            Point3D iterator3d = location.copy();
+            Point2D iterator = new Point2D(iterator3d, plane);
+            iterator.changePlane(plane);
+
+            //--參考3維地圖建立2維地圖--
+            for (int i = 0; i < map_size; i++)
+                for (int j = 0; j < map_size; j++)
+                {
+                    iterator.moveTo(i, j);
+                    nmap[i, j] = refrenceMap.valueAt(iterator3d);
+                }
+
+            return true;
+        }
+        //創造2維地圖
+        public bool creat2DMapOn(Plane plane,int value)
+        {
+            if (refrenceMap == null) return false;
+
             //--參考3維地圖建立2維地圖--
             for (int i = 0; i < map_size; i++)
                 for (int j = 0; j < map_size; j++)
@@ -47,7 +60,14 @@ namespace My3DMaze
                             nmap[i, j] = refrenceMap.map[i, j, value];
                             break;
                     }
+            return true;
         }
+        //創造2維地圖
+        public bool creat2DMapRefrence(Point2D location)
+        {
+            return creat2DMapOn(location.plane, location.planeValue);
+        }
+
 
         public void drawOn(MapGraph graph , Point2D showedCenter , int showedSize)
         {

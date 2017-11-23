@@ -309,13 +309,13 @@ namespace My3DMaze
                     switch (you.plane)     //在哪個平面建立
                     {
                         case Plane.X:
-                            nmap[i, j] = map[you.location.X, i, j];
+                            nmap[i, j] = map[you.location.x, i, j];
                             break;
                         case Plane.Y:
-                            nmap[i, j] = map[j, you.location.Y, i];
+                            nmap[i, j] = map[j, you.location.y, i];
                             break;
                         case Plane.Z:
-                            nmap[i, j] = map[i, j, you.location.Z];
+                            nmap[i, j] = map[i, j, you.location.z];
                             break;
                     }
 

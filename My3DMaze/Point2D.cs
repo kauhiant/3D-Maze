@@ -22,6 +22,7 @@ namespace My3DMaze
     
     class Point2D
     {
+// 屬性
         private Point1D X;
         private Point1D Y;/*{ get; private set; }*/
         
@@ -37,29 +38,38 @@ namespace My3DMaze
                 switch (plane)
                 {
                     case Plane.X:
-                        return binded.X;
+                        return binded.x;
                     case Plane.Y:
-                        return binded.Y;
+                        return binded.y;
                     case Plane.Z:
-                        return binded.Z;
+                        return binded.z;
                     default:
                         return -1;
                 }
             }
         }
 
-        public Point2D(int X, int Y)
+
+// 建構子
+        public Point2D(int x, int y)
         {
-            this.X = new Point1D(X);
-            this.Y = new Point1D(Y);
+            this.bind(new Point1D(x), new Point1D(y));
         }
 
         public Point2D(Point1D X , Point1D Y)
         {
-            this.X = X;
-            this.Y = Y;
+            this.bind(X, Y);
         }
 
+        public Point2D(Point3D binded , Plane plane)
+        {
+            this.binded = binded;
+            this.plane = plane;
+            this.changePlane(plane);
+        }
+        
+
+//方法
         public void bind(Point1D X, Point1D Y)
         {
             this.X = X;
@@ -70,6 +80,35 @@ namespace My3DMaze
         {
             this.binded = target;
             this.plane = plane;
+        }
+
+        public void changePlane(Plane plane)
+        {
+            this.plane = plane;
+            switch (plane)
+            {
+                case Plane.X:
+                    this.bind(binded.Y, binded.Z);
+                    break;
+                case Plane.Y:
+                    this.bind(binded.Z, binded.X);
+                    break;
+                case Plane.Z:
+                    this.bind(binded.X, binded.Y);
+                    break;
+            }
+        }
+        
+        public void moveTo(Point2D target)
+        {
+            this.X.set(target.x);
+            this.Y.set(target.y);
+        }
+
+        public void moveTo(int x, int y)
+        {
+            this.X.set(x);
+            this.Y.set(y);
         }
 
         public void moveForward(Vector2D vector , int distance=1)
@@ -121,7 +160,14 @@ namespace My3DMaze
             return (this.X.inRange(range.xRange) && this.Y.inRange(range.yRange));
         }
 
+        public bool onEdge(Range2D range)
+        {
+            return  
+                (X.onEdge(range.xRange) && Y.inRange(range.yRange)) || 
+                (Y.onEdge(range.yRange) && X.inRange(range.xRange));
+        }
 
+//複寫
         public override string ToString()
         {
             return "X = " + x + " ,Y = " + y ;

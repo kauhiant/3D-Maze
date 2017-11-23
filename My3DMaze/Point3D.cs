@@ -30,32 +30,36 @@ namespace My3DMaze
     class Point3D
     {
         //軸
-        public Point1D x { get; private set; }
-        public Point1D y { get; private set; }
-        public Point1D z { get; private set; }
+        public Point1D X { get; private set; }
+        public Point1D Y { get; private set; }
+        public Point1D Z { get; private set; }
 
-        public int X { get { return x.value; } }
-        public int Y { get { return y.value; } }
-        public int Z { get { return z.value; } }
-        //平面
-        public Point2D plane;
+        public int x { get { return X.value; } }
+        public int y { get { return Y.value; } }
+        public int z { get { return Z.value; } }
 
-        public Point3D(int x,int y,int z)
+        public Point3D(int X,int Y,int Z)
         {
-            this.x = new Point1D(x);
-            this.y = new Point1D(y);
-            this.z = new Point1D(z);
+            this.X = new Point1D(X);
+            this.Y = new Point1D(Y);
+            this.Z = new Point1D(Z);
+        }
+
+        public Point3D copy()
+        {
+            Point3D retCopy = new Point3D(x,y,z);
+            return retCopy;
         }
 
         public int distanceTo(Point3D target)
         {
             int tmp = 0;
             int min = int.MaxValue;
-            tmp = this.x.distanceTo(target.x) ;
+            tmp = this.X.distanceTo(target.X) ;
             min = min < tmp ? min : tmp;
-            tmp = this.y.distanceTo(target.y);
+            tmp = this.Y.distanceTo(target.Y);
             min = min < tmp ? min : tmp;
-            tmp = this.z.distanceTo(target.z);
+            tmp = this.Z.distanceTo(target.Z);
             min = min < tmp ? min : tmp;
 
             return min;
@@ -63,21 +67,23 @@ namespace My3DMaze
 
         public override string ToString()
         {
-            return "X=" + x + " ,Y=" + y + " ,Z=" + z;
+            return "x=" + X + " ,y=" + Y + " ,z=" + Z;
         }
         //不包刮邊緣
         public bool inRange(Range3D range)
         {
-            return (this.x.inRange(range.xRange) &&
-                this.y.inRange(range.yRange) &&
-                this.z.inRange(range.zRange));
+            return (this.X.inRange(range.xRange) &&
+                this.Y.inRange(range.yRange) &&
+                this.Z.inRange(range.zRange));
         }
 
         public bool onEdge(Range3D range)
         {
-            return (this.x.onEdge(range.xRange) ||
-                this.y.onEdge(range.yRange) ||
-                this.z.onEdge(range.zRange));
+            return (
+                X.onEdge(range.xRange) && Y.inRange(range.yRange) && Z.inRange(range.zRange) ||
+                Y.onEdge(range.xRange) && X.inRange(range.yRange) && Z.inRange(range.zRange) ||
+                Z.onEdge(range.xRange) && X.inRange(range.yRange) && Y.inRange(range.zRange)
+                );
         }
 
         public void moveForward(Vector3D vector ,int distance)
@@ -85,27 +91,27 @@ namespace My3DMaze
             switch (vector)
             {
                 case Vector3D.Xplus:
-                    x.add(distance);
+                    X.add(distance);
                     break;
 
                 case Vector3D.Xsub:
-                    x.add(-distance);
+                    X.add(-distance);
                     break;
 
                 case Vector3D.Yplus:
-                    y.add(distance);
+                    Y.add(distance);
                     break;
 
                 case Vector3D.Ysub:
-                    y.add(-distance);
+                    Y.add(-distance);
                     break;
 
                 case Vector3D.Zplus:
-                    z.add(distance);
+                    Z.add(distance);
                     break;
 
                 case Vector3D.Zsub:
-                    z.add(-distance);
+                    Z.add(-distance);
                     break;
             }
         }
@@ -115,27 +121,27 @@ namespace My3DMaze
             switch (vector)
             {
                 case Vector3D.Xplus:
-                    x.add(-distance);
+                    X.add(-distance);
                     break;
 
                 case Vector3D.Xsub:
-                    x.add(distance);
+                    X.add(distance);
                     break;
 
                 case Vector3D.Yplus:
-                    y.add(-distance);
+                    Y.add(-distance);
                     break;
 
                 case Vector3D.Ysub:
-                    y.add(distance);
+                    Y.add(distance);
                     break;
 
                 case Vector3D.Zplus:
-                    z.add(-distance);
+                    Z.add(-distance);
                     break;
 
                 case Vector3D.Zsub:
-                    z.add(distance);
+                    Z.add(distance);
                     break;
             }
         }

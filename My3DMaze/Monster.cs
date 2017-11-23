@@ -54,9 +54,9 @@ namespace My3DMaze
         public int getY() { return y; }
         public int getZ() { return z; }
 
-        public int X { get { return location.X; } }
-        public int Y { get { return location.Y; } }
-        public int Z { get { return location.Z; } }
+        public int X { get { return location.x; } }
+        public int Y { get { return location.y; } }
+        public int Z { get { return location.z; } }
 
         public char getType() { return type; }
         public int getHP() { return HP; }

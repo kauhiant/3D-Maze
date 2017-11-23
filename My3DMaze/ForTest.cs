@@ -20,18 +20,20 @@ namespace My3DMaze
         public ForTest()
         {
             InitializeComponent();
-            mainMap = new Map3D(64,200,0.5);
-            location3d = new Point3D(32,32,32);
 
+            location3d = new Point3D(32, 32, 32);
+            location = new Point2D(location3d, Plane.Z);
+
+            mainMap = new Map3D(64,20,0.5);
             map = new Map2D(mainMap);
-            location = new Point2D(32,32);
-
-            location.bindWith(location3d, Plane.Z);
+         //   map.creat2DMapRefrence(location);
+            map.creatMap(location3d, location.plane);
 
             test = new MapGraph(pictureBox1);
-            pictureBox1.BackColor = Color.Green;
+            pictureBox1.BackColor = Color.Blue;
             map.drawOn(test, location, 5);
             test.update();
+            
         }
 
         
@@ -54,18 +56,22 @@ namespace My3DMaze
                     break;
 
                 case Keys.X:
-                    map.creat2DMapOn(Plane.X, location.planeValue);
+                    location.changePlane(Plane.X);
+                    test.backColorTo(Color.Red);
                     break;
                 case Keys.Y:
-                    map.creat2DMapOn(Plane.Y, location.planeValue);
+                    location.changePlane(Plane.Y);
+                    test.backColorTo(Color.Green);
                     break;
                 case Keys.Z:
-                    map.creat2DMapOn(Plane.Z, location.planeValue);
+                    location.changePlane(Plane.Z);
+                    test.backColorTo(Color.Blue);
                     break;
             }
-
+            //  map.creat2DMapRefrence(location);
+            map.creatMap(location3d, location.plane);
             map.drawOn(test, location, 5);
-            Text = location.ToString();
+            Text = location3d.ToString();
             test.update();
         }
     }

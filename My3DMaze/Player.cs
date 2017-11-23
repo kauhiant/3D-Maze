@@ -20,9 +20,9 @@ namespace My3DMaze
 
         public Plane plane      { get; private set; }   //你的視角在哪個平面 "x" or "y" or "z"
         public Point3D location { get; private set; }   //座標 你的位置
-        public int X { get { return location.X; } }
-        public int Y { get { return location.Y; } }
-        public int Z { get { return location.Z; } }
+        public int X { get { return location.x; } }
+        public int Y { get { return location.y; } }
+        public int Z { get { return location.z; } }
 
         //初始化 
         public Player(int x=0,int y=0,int z=0,Plane p=Plane.Z,int hp=15)
@@ -55,11 +55,11 @@ namespace My3DMaze
             switch (this.plane)
             {
                 case Plane.X:
-                    return location.X;
+                    return location.x;
                 case Plane.Y:
-                    return location.Y;
+                    return location.y;
                 case Plane.Z:
-                    return location.Z;
+                    return location.z;
                 default:
                     return -1;
             }
@@ -68,16 +68,16 @@ namespace My3DMaze
         //在視角平面上的二維座標
         public int getA()
         {
-            if (plane == Plane.X) return location.Y;
-            else if (plane == Plane.Y) return location.Z;
-            else if (plane == Plane.Z) return location.X;
+            if (plane == Plane.X) return location.y;
+            else if (plane == Plane.Y) return location.z;
+            else if (plane == Plane.Z) return location.x;
             else return 0;
         }
         public int getB()
         {
-            if (plane == Plane.X) return location.Z;
-            else if (plane == Plane.Y) return location.X;
-            else if (plane == Plane.Z) return location.Y;
+            if (plane == Plane.X) return location.z;
+            else if (plane == Plane.Y) return location.x;
+            else if (plane == Plane.Z) return location.y;
             else return 0;
         }
         
@@ -133,15 +133,15 @@ namespace My3DMaze
             switch (plane)
             {
                 case Plane.X:
-                    point2D.bind(location.y, location.z);
+                    point2D.bind(location.Y, location.Z);
                     mmove(point2D, udlr, ref nmap);
                     break;
                 case Plane.Y:
-                    point2D.bind(location.z, location.x);
+                    point2D.bind(location.Z, location.X);
                     mmove(point2D, udlr, ref nmap);
                     break;
                 case Plane.Z:
-                    point2D.bind(location.x, location.y);
+                    point2D.bind(location.X, location.Y);
                     mmove(point2D, udlr, ref nmap);
                     break;
             }
@@ -193,9 +193,9 @@ namespace My3DMaze
             energy --;
             //因為走到邊界遊戲就結束了沒辦法攻擊邊界外的空資料所以不設邊界條件
             //以後更新可能要加邊界條件
-            for (int i = location.X - 1; i < location.X + 2; ++i)
-                for (int j = location.Y - 1; j < location.Y + 2; ++j)
-                    for (int k = location.Z - 1; k < location.Z + 2; ++k)
+            for (int i = location.x - 1; i < location.x + 2; ++i)
+                for (int j = location.y - 1; j < location.y + 2; ++j)
+                    for (int k = location.z - 1; k < location.z + 2; ++k)
                     {
                         map[i, j, k] -= power;  //攻擊牆壁
                         if (map[i, j, k] < 0) map[i, j, k] = 0; //如果牆壁生命小於0 那就歸零
