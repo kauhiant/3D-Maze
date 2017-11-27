@@ -9,6 +9,10 @@ namespace My3DMaze
 {
     class Player
     {
+        private Map3D map;
+        private Map2D map2d;
+        public Point2D location2d;
+
         Random rand = new Random();
         const int energyPow = 1;    //energy 和 HP 的比例
         public int score        { get; private set; }   //分數
@@ -25,7 +29,22 @@ namespace My3DMaze
         public int Z { get { return location.z; } }
 
         //初始化 
-        public Player(int x=0,int y=0,int z=0,Plane p=Plane.Z,int hp=15)
+        public Player(Map3D maze, int x=0,int y=0,int z=0,Plane p=Plane.Z,int hp=15)
+        {
+            score = 0;
+            location = new Point3D(x, y, z);
+            location2d = new Point2D(location,p);
+            plane = p;
+            HP = hp;
+            energy = HP * energyPow; //初始能量和血量的關係
+            power = 1;
+
+            this.map = maze;
+            this.map2d = new Map2D(this.map);
+            this.map2d.creat2DMapOn(p, location.valueAtPlane(p));
+        }
+        //初始化 
+        public Player(int x = 0, int y = 0, int z = 0, Plane p = Plane.Z, int hp = 15)
         {
             score = 0;
             location = new Point3D(x, y, z);
@@ -34,7 +53,7 @@ namespace My3DMaze
             energy = HP * energyPow; //初始能量和血量的關係
             power = 1;
         }
-        
+
         //在哪個平面
         public string getPlaneString()
         {
@@ -212,6 +231,19 @@ namespace My3DMaze
                 HP++;
             else
                 energy++;
+        }
+        
+        public void moveForward(Vector2D forward)
+        {
+            this.location2d.moveForward(forward,1);
+
+            if (map.valueAt(location) != 0)
+                this.location2d.moveBack(forward, 1);
+        }
+
+        public void showOn(MapGraph target)
+        {
+
         }
     }
 }

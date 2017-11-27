@@ -2,6 +2,8 @@
 
 namespace My3DMaze
 {
+
+
     class Map2D
     {
         private int[,] nmap;        //存牆壁的血量 2維地圖 the data of your palne
@@ -22,6 +24,8 @@ namespace My3DMaze
             this.map_size = refrenceMap.GetLength(0);
             this.nmap = refrenceMap;
         }
+
+
         //創造2維地圖
         public bool creatMap(Point3D location,Plane plane)
         {

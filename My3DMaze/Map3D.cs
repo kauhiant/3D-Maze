@@ -37,6 +37,9 @@ namespace My3DMaze
                         else
                             map[i, j, k] = grid_hard;   //牆壁血量初始化 you can't pass
         }
+
+        
+
         public void testRange(Point3D point)
         {
             Console.WriteLine("onEdge:{0} , inRange{1}", point.onEdge(this.range), point.inRange(this.range));

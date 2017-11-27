@@ -51,6 +51,21 @@ namespace My3DMaze
             return retCopy;
         }
 
+        public int valueAtPlane(Plane plane)
+        {
+            switch (plane)
+            {
+                case Plane.X:
+                    return x;
+                case Plane.Y:
+                    return y;
+                case Plane.Z:
+                    return z;
+                default:
+                    return -1;
+            }
+        }
+
         public int distanceTo(Point3D target)
         {
             int tmp = 0;
