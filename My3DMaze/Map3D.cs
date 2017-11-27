@@ -52,5 +52,13 @@ namespace My3DMaze
                 return 0;
 
         }
+
+        public void beAttack(Point3D target,int destroy)
+        {
+            if (!target.inRange(range)) return;
+
+            if ((this.map[target.x, target.y, target.z] -= destroy) < 0)
+                this.map[target.x, target.y, target.z] = 0;
+        }
     }
 }

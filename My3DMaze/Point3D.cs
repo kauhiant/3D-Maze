@@ -130,36 +130,7 @@ namespace My3DMaze
                     break;
             }
         }
-
-        public void moveBack(Vector3D vector, int distance)
-        {
-            switch (vector)
-            {
-                case Vector3D.Xplus:
-                    X.add(-distance);
-                    break;
-
-                case Vector3D.Xsub:
-                    X.add(distance);
-                    break;
-
-                case Vector3D.Yplus:
-                    Y.add(-distance);
-                    break;
-
-                case Vector3D.Ysub:
-                    Y.add(distance);
-                    break;
-
-                case Vector3D.Zplus:
-                    Z.add(-distance);
-                    break;
-
-                case Vector3D.Zsub:
-                    Z.add(distance);
-                    break;
-            }
-        }
+        
 
     }
 }

@@ -8,8 +8,8 @@ namespace My3DMaze
 {
     class Monster
     {
+        private Map3D map;
         protected Point3D location;//位置
-        protected int x, y, z;    //位置
         protected int HP, power, attackRange, bonus;  //生命、力量、攻擊範圍、獎勵
         char type;  //型態 { R:紅怪物 B:藍怪物 P:復仇者 }
         protected int trackRange; //追蹤範圍
@@ -34,10 +34,18 @@ namespace My3DMaze
                 HP = 5;
                 type = 'P';
             }
-            else { HP = 0;type = 'D';  }
-            x = X;  y = Y;  z = Z;
+            else
+            {
+                HP = 0;type = 'D';
+            }
+
             location = new Point3D(X,Y,Z);
             changeType(T);
+        }
+
+        public void joinInMap(Map3D map)
+        {
+            this.map = map;
         }
 
         //殺死怪物 並回傳獎勵
@@ -45,14 +53,8 @@ namespace My3DMaze
         {
             HP = 0; power = 0; attackRange = 0; trackRange = 0;
             type = 'D';
-            x = 0; y = 0; z = 0;
-            //location destructure
             return bonus;
         }
-
-        public int getX() { return x; }
-        public int getY() { return y; }
-        public int getZ() { return z; }
 
         public int X { get { return location.x; } }
         public int Y { get { return location.y; } }
@@ -104,35 +106,12 @@ namespace My3DMaze
             
             Vector3D vect = track(A, trackRange);
 
-            switch (vect)   //根據方向數決定走哪裡
+            this.location.moveForward(vect,1);
+
+            if (!location.inRange(this.map.range))
             {
-                case Vector3D.Xplus:
-                    if (x + 1 < map.GetLength(0) && map[x + 1, y, z] == 0) //邊界條件 不寫會爆
-                        x++; 
-                    break;
-                case Vector3D.Xsub:
-                    if (x - 1 > 0 && map[x - 1, y, z] == 0)
-                        x--;
-                    break;
-                case Vector3D.Yplus:
-                    if (y + 1 < map.GetLength(0) && map[x, y + 1, z] == 0)
-                        y++;
-                    break;
-                case Vector3D.Ysub:
-                    if (y - 1 > 0 && map[x, y - 1, z] == 0)
-                        y--;
-                    break;
-                case Vector3D.Zplus:
-                    if (z + 1 < map.GetLength(0) && map[x, y, z + 1] == 0)
-                        z++;
-                    break;
-                case Vector3D.Zsub:
-                    if (z - 1 > 0 && map[x, y, z - 1] == 0)
-                        z--;
-                    break;
+                this.location.moveForward(vect, -1);
             }
-            //location.moveForward(vect, 1);
-           // if(location.inRange()))
         }
         //追蹤玩家 /*或逃跑*/
         public Vector3D track(Player A, int trackRange)
@@ -140,22 +119,20 @@ namespace My3DMaze
            // int vect = rand.Next(-3,4);   //方向 [1:X方向 2:Y方向 3:Z方向]
             if (trackRange < 0) return Vector3D.Null;
             //在追蹤範圍內--還能改更好--
-            if (Math.Abs(A.X - x) < Math.Abs(trackRange) &&
-                Math.Abs(A.Y - y) < Math.Abs(trackRange) &&
-                Math.Abs(A.Z - z) < Math.Abs(trackRange)   )
+            if (A.location.distanceTo(this.location) <= trackRange)
                     switch (rand.Next(0, 3))    //隨機選一個向量判斷
                     {
                         case 0:
-                            if (A.X > x) return Vector3D.Xplus;
-                            if (A.X < x) return Vector3D.Xsub;
+                            if (A.X > X) return Vector3D.Xplus;
+                            if (A.X < X) return Vector3D.Xsub;
                             break;
                         case 1:
-                            if (A.Y > y) return Vector3D.Yplus;
-                            if (A.Y < y) return Vector3D.Ysub;
+                            if (A.Y > Y) return Vector3D.Yplus;
+                            if (A.Y < Y) return Vector3D.Ysub;
                             break;
                         case 2:
-                            if (A.Z > z) return Vector3D.Zplus;
-                            if (A.Z < z) return Vector3D.Zsub;
+                            if (A.Z > Z) return Vector3D.Zplus;
+                            if (A.Z < Z) return Vector3D.Zsub;
                             break;
                     }
             
@@ -166,9 +143,7 @@ namespace My3DMaze
         public bool attack(Player A)
         {
             if (!isDead())//這行應該也不用
-                if (Math.Abs(A.X - x) <= attackRange && //在攻擊範圍內
-                    Math.Abs(A.Y - y) <= attackRange && 
-                    Math.Abs(A.Z - z) <= attackRange )
+                if (A.location.distanceTo(this.location) <= attackRange)
                 {
                     A.addHP(-1 * power);
                     return true;
@@ -180,22 +155,22 @@ namespace My3DMaze
         //是否在這個位置
         public bool isPoint(int X,int Y,int Z)
         {
-            return (X == x && Y == y && Z == z);
+            return (X == this.X && Y == this.Y && Z == this.Z);
         }
 
         //在plane平面上的座標 [A:左右向 B:上下向]
         public int getA(Plane plane)
         {
-            if (plane == Plane.X) return y;
-            else if (plane == Plane.Y) return z;
-            else if (plane == Plane.Z) return x;
+            if (plane == Plane.X) return Y;
+            else if (plane == Plane.Y) return Z;
+            else if (plane == Plane.Z) return X;
             else return 0;
         }
         public int getB(Plane plane)
         {
-            if (plane == Plane.X) return z;
-            else if (plane == Plane.Y) return x;
-            else if (plane == Plane.Z) return y;
+            if (plane == Plane.X) return Z;
+            else if (plane == Plane.Y) return X;
+            else if (plane == Plane.Z) return Y;
             else return 0;
         }
 
@@ -205,13 +180,13 @@ namespace My3DMaze
             switch (p)
             {
                 case Plane.X:
-                    return x == n;
+                    return X == n;
 
                 case Plane.Y:
-                    return y == n;
+                    return Y == n;
 
                 case Plane.Z:
-                    return z == n;
+                    return Z == n;
 
                 default:
                     return false;

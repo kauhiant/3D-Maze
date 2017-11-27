@@ -537,9 +537,9 @@ namespace My3DMaze
         {
             for(int i = 0; i < monsterList.Count; i++)
             {
-                int x = monsterList[i].getX();
-                int y = monsterList[i].getY();
-                int z = monsterList[i].getZ();
+                int x = monsterList[i].X;
+                int y = monsterList[i].Y;
+                int z = monsterList[i].Z;
                 
                 //is near by you ?
                 if (x - 1 <= you.X && you.X <= x + 1 &&

@@ -175,7 +175,7 @@ namespace My3DMaze
                 return true;
             else
             {
-                location2D.moveBack(udlr);
+                location2D.moveForward(udlr, -1);
                 return false;
             }
         }
@@ -221,7 +221,24 @@ namespace My3DMaze
                     }
                     
         }
-        
+
+        //攻擊地圖中的牆壁 全範圍 距離1 加自己共27格
+        public void attack(Map3D map)
+        {
+            //能量不夠不能攻擊
+            if (energy == 0) return;
+
+       //     energy--;
+
+            //因為走到邊界遊戲就結束了沒辦法攻擊邊界外的空資料所以不設邊界條件
+            //以後更新可能要加邊界條件
+            for (int i = location.x - 1; i < location.x + 2; ++i)
+                for (int j = location.y - 1; j < location.y + 2; ++j)
+                    for (int k = location.z - 1; k < location.z + 2; ++k)
+                        map.beAttack(new Point3D(i, j, k), power);
+
+        }
+
         //獲取獎勵 [力量+1]:10%   [生命+1]:40%  [能量+1]:50%
         public void getBonus(double tmp)
         {
@@ -238,12 +255,12 @@ namespace My3DMaze
             this.location2d.moveForward(forward,1);
 
             if (map.valueAt(location) != 0)
-                this.location2d.moveBack(forward, 1);
+                this.location2d.moveForward(forward, -1);
         }
 
         public void showOn(MapGraph target)
         {
-
+            target.drawGrid(Const.seenSize, Const.seenSize, Color.White);
         }
     }
 }

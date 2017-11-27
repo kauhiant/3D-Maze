@@ -16,10 +16,13 @@ namespace My3DMaze
         MapGraph test;
         Map2D map;
         Player me;
+        //picturebox 大小要是60的倍數
+        int count = 0;
         public ForTest()
         {
             InitializeComponent();
 
+            
             mainMap = new Map3D(64,20,0.5);
             map = new Map2D(mainMap);
 
@@ -30,7 +33,8 @@ namespace My3DMaze
 
             test = new MapGraph(pictureBox1);
             pictureBox1.BackColor = Color.Blue;
-            map.drawOn(test, me.location2d, 5);
+            map.drawOn(test, me.location2d, Const.seenSize);
+            me.showOn(test);
             test.update();
             
         }
@@ -66,10 +70,14 @@ namespace My3DMaze
                     me.location2d.changePlane(Plane.Z);
                     test.backColorTo(Color.Blue);
                     break;
+                case Keys.Space:
+                    me.attack(mainMap);
+                    break;
             }
             //  map.creat2DMapRefrence(location);
             map.creatMap(me.location, me.location2d.plane);
-            map.drawOn(test, me.location2d, 5);
+            map.drawOn(test, me.location2d, Const.seenSize);
+            me.showOn(test);
             Text = me.location.ToString();
             test.update();
         }

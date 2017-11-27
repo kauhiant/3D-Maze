@@ -76,7 +76,7 @@ namespace My3DMaze
         public void drawOn(MapGraph graph , Point2D showedCenter , int showedSize)
         {
             int maxSize = showedSize * 2 + 1;
-            graph.setGrid(maxSize);
+            graph.formatGrid(maxSize);
             Color color;
 
             for (int i = 0; i < maxSize; ++i)

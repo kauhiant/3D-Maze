@@ -133,27 +133,7 @@ namespace My3DMaze
             }
         }
 
-        public void moveBack(Vector2D vector, int distance = 1)
-        {
-            switch (vector)
-            {
-                case Vector2D.Up:
-                    this.Y.add(distance);
-                    break;
-
-                case Vector2D.Down:
-                    this.Y.add(-distance);
-                    break;
-
-                case Vector2D.Left:
-                    this.X.add(distance);
-                    break;
-
-                case Vector2D.Right:
-                    this.X.add(-distance);
-                    break;
-            }
-        }
+       
 
         public bool inRange(Range2D range)
         {

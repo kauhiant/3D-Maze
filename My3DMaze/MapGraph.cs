@@ -15,8 +15,8 @@ namespace My3DMaze
         private Bitmap _graph;
         private int divX;   //X軸分割成?個小格子
         private int divY;   //Y軸分割成?個小格子
-        private int gridX;  //小格子的X大小
-        private int gridY;  //小格子的Y大小
+        private int gridWidth;  //小格子的X大小
+        private int gridHeight;  //小格子的Y大小
 
         public MapGraph(PictureBox scene)
         {
@@ -25,20 +25,22 @@ namespace My3DMaze
             this.graph = Graphics.FromImage(_graph);
         }
 
-        public void setGrid(int divBase)
+        public void formatGrid(int divBase)
         {
             this.divX = divBase;
             this.divY = divBase;
-            this.gridX = _graph.Width / divX;
-            this.gridY = _graph.Height / divY;
+            this.gridWidth = _graph.Width / divX;
+            this.gridHeight = _graph.Height / divY;
+
+            Console.WriteLine("{0},{1}", gridWidth, gridHeight);
         }
 
-        public void setGrid(int divX,int divY)
+        public void formatGrid(int divX,int divY)
         {
             this.divX = divX;
             this.divY = divY;
-            this.gridX = scene.Width / divX;
-            this.gridY = scene.Height / divY;
+            this.gridWidth = scene.Width / divX;
+            this.gridHeight = scene.Height / divY;
         }
 
         public void update()
@@ -52,11 +54,11 @@ namespace My3DMaze
         {
             if (x >= divX || y >= divY || x < 0 || y < 0) return false;
 
-            int XEdge = (x + 1) * gridX;
-            int YEdge = (y + 1) * gridY;
+            int XEdge = (x + 1) * gridWidth;
+            int YEdge = (y + 1) * gridHeight;
 
-            for (int j = y * gridY; j < YEdge && j < scene.Height; j++)
-                for (int i = x * gridX; i < XEdge && i < scene.Width; i++)
+            for (int j = y * gridHeight; j < YEdge; j++)
+                for (int i = x * gridWidth; i < XEdge; i++)
                 {
                     //Graph a pixel on mapGraph
                     _graph.SetPixel(i, j, color);
@@ -65,10 +67,7 @@ namespace My3DMaze
             return true;
         }
 
-        public void clear()
-        {
-           // graph.Clear(Color.Transparent);
-        }
+    
 
         //Graph a grid on bitmap(small map)(mapGraph)
         //在Bitmap上畫一個圖片(圖片大小需要設定)
