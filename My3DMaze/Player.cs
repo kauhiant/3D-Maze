@@ -17,12 +17,13 @@ namespace My3DMaze
         const int energyPow = 1;    //energy 和 HP 的比例
         public int score        { get; private set; }   //分數
         public Graphics image   { get; private set; }   //外觀
+        public Color color      { get; private set; }   //顏色
 
         public int HP       { get; private set; }   //血量
         public int power    { get; private set; }   //力量
         public int energy   { get; private set; }   //能量
 
-        public Plane plane      { get; private set; }   //你的視角在哪個平面 "x" or "y" or "z"
+        public Plane plane      { get { return location2d.plane; }  }   //你的視角在哪個平面 "x" or "y" or "z"
         public Point3D location { get; private set; }   //座標 你的位置
         public int X { get { return location.x; } }
         public int Y { get { return location.y; } }
@@ -34,10 +35,11 @@ namespace My3DMaze
             score = 0;
             location = new Point3D(x, y, z);
             location2d = new Point2D(location,p);
-            plane = p;
             HP = hp;
             energy = HP * energyPow; //初始能量和血量的關係
             power = 1;
+
+            this.color = Color.Green;
 
             this.map = maze;
             this.map2d = new Map2D(this.map);
@@ -48,7 +50,6 @@ namespace My3DMaze
         {
             score = 0;
             location = new Point3D(x, y, z);
-            plane = p;
             HP = hp;
             energy = HP * energyPow; //初始能量和血量的關係
             power = 1;
@@ -98,6 +99,12 @@ namespace My3DMaze
             else if (plane == Plane.Y) return location.x;
             else if (plane == Plane.Z) return location.y;
             else return 0;
+        }
+
+        //改變顏色
+        public void changeColorTo(Color color)
+        {
+            this.color = color;
         }
         
         //輸出位置字串
@@ -196,10 +203,10 @@ namespace My3DMaze
                 if (planeNumber < 0) planeNumber = 2;
             }
             switch (planeNumber)   
-            {
+            {/*
                 case 0: plane = Plane.X; break;
                 case 1: plane = Plane.Y; break;
-                case 2: plane = Plane.Z; break;
+                case 2: plane = Plane.Z; break;*/
             }
         }
 
@@ -260,7 +267,17 @@ namespace My3DMaze
 
         public void showOn(MapGraph target)
         {
-            target.drawGrid(Const.seenSize, Const.seenSize, Color.White);
+            target.drawGrid(Const.seenSize, Const.seenSize, this.color, (this.HP<126)?this.HP*255/126:255);
+        }
+
+        public string information()
+        {
+            string retValue = "";
+            retValue += "HP:" + this.HP + Environment.NewLine;
+            retValue += "power:" + this.power + Environment.NewLine;
+            retValue += "energy:" + this.energy + Environment.NewLine;
+            retValue += "Plane:" + this.plane.ToString();
+            return retValue;
         }
     }
 }

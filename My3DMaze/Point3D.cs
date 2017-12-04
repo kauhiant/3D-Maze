@@ -128,6 +128,8 @@ namespace My3DMaze
                 case Vector3D.Zsub:
                     Z.add(-distance);
                     break;
+                default:
+                    break;
             }
         }
         

@@ -574,7 +574,7 @@ namespace My3DMaze
         {
             for (int i = 0; i < monsterList.Count; i++)
             {
-                monsterList[i].move(map,you);
+                monsterList[i].move(you);
 
                 if (monsterList[i].attack(you))
                     graphWave();

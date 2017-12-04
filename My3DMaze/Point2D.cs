@@ -18,6 +18,11 @@ namespace My3DMaze
             this.xRange = xRange;
             this.yRange = yRange;
         }
+        public Range2D(Point2D center, int extraRange)
+        {
+            this.xRange = new Range1D(center.x - extraRange, center.x + extraRange);
+            this.yRange = new Range1D(center.y - extraRange, center.y + extraRange);
+        }
     }
     
     class Point2D

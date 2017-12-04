@@ -66,8 +66,24 @@ namespace My3DMaze
 
             return true;
         }
+        public bool drawGrid(int x, int y, Color color, int alpha)
+        {
+            if (x >= divX || y >= divY || x < 0 || y < 0) return false;
 
-    
+            int XEdge = (x + 1) * gridWidth;
+            int YEdge = (y + 1) * gridHeight;
+
+            for (int j = y * gridHeight; j < YEdge; j++)
+                for (int i = x * gridWidth; i < XEdge; i++)
+                {
+                    //Graph a pixel on mapGraph
+                    _graph.SetPixel(i, j, Color.FromArgb(alpha, color));
+                }
+
+            return true;
+        }
+
+
 
         //Graph a grid on bitmap(small map)(mapGraph)
         //在Bitmap上畫一個圖片(圖片大小需要設定)
