@@ -10,22 +10,30 @@ namespace My3DMaze
     {
         public int minValue { get; private set; }
         public int maxValue { get; private set; }
-        public Range1D(int leftVal, int rightVal)
+
+        // set min/maxValue by left/rightVal.
+        public Range1D(int minVal, int maxVal)
         {
-            if (rightVal > leftVal)
+            if (minVal > maxVal)
             {
-                int tmp = rightVal;
-                rightVal = leftVal;
-                leftVal = tmp;
+                int tmp = maxVal;
+                maxVal = minVal;
+                minVal = tmp;
             }
-            this.minValue = leftVal;
-            this.maxValue = rightVal;
+            this.minValue = minVal;
+            this.maxValue = maxVal;
         }
 
+        // set maxValue by size.
         public Range1D(int size)
         {
             this.minValue = 0;
             this.maxValue = size - 1;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("[{0},{1}]", minValue, maxValue);
         }
     }
 
@@ -37,21 +45,25 @@ namespace My3DMaze
             this.value = value;
         }
 
+        // set value by value.
         public void set(int value)
         {
             this.value = value;
         }
 
+        // add val to value.
         public void add(int value)
         {
             this.value += value;
         }
 
+        // return distance between this and target.
         public int distanceTo(Point1D target)
         {
             return Math.Abs(this.value - target.value);
         }
 
+        // is this in the range[a,b]?
         public bool inRange(int a,int b)
         {
             if (a == b)
@@ -67,17 +79,20 @@ namespace My3DMaze
             }
             return (value >= a && value <= b);
         }
-        //包括邊緣
+
+        // is this in the range?
         public bool inRange(Range1D range)
         {
             return (this.value >= range.minValue && this.value <= range.maxValue);
         }
-        //在邊緣上
+
+        // is this on edge of the range?
         public bool onEdge(Range1D range)
         {
             return (this.value == range.minValue || this.value == range.maxValue);
         }
 
+        // return value.
         public override string ToString()
         {
             return this.value.ToString();

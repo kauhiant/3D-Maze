@@ -8,98 +8,104 @@ using System.Drawing;
 
 namespace My3DMaze
 {
+
+
     class MapGraph
     {
         private System.Windows.Forms.PictureBox scene;
         private Graphics graph;
-        private Bitmap _graph;
+        private Bitmap   buffer;
         private int divX;   //X軸分割成?個小格子
         private int divY;   //Y軸分割成?個小格子
-        private int gridWidth;  //小格子的X大小
-        private int gridHeight;  //小格子的Y大小
+        private double gridWidth;   //小格子的X大小
+        private double gridHeight;  //小格子的Y大小
 
-        public MapGraph(PictureBox scene)
+        // bind to outer scene 
+        // density : [1:Clear, 2:Middle, 4:Blurry]
+        // divBase : divide scene by given value
+        public MapGraph(PictureBox scene,int density=1, int divBase = 16)
         {
-            this.scene = scene;
-            this._graph = new Bitmap(scene.Width/4, scene.Height/4);
-            this.graph = Graphics.FromImage(_graph);
+            this.scene  = scene;
+            this.buffer = new Bitmap(scene.Width/density, scene.Height/density);
+            this.graph  = Graphics.FromImage(buffer);
+            this.formatGrid(divBase);
+            this.scene.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
+        // divide scene by given value.
         public void formatGrid(int divBase)
         {
-            this.divX = divBase;
-            this.divY = divBase;
-            this.gridWidth = _graph.Width / divX;
-            this.gridHeight = _graph.Height / divY;
-
-            Console.WriteLine("{0},{1}", gridWidth, gridHeight);
+            this.formatGrid(divBase, divBase);
         }
 
+        // divide scene by given value.
         public void formatGrid(int divX,int divY)
         {
             this.divX = divX;
             this.divY = divY;
-            this.gridWidth = scene.Width / divX;
-            this.gridHeight = scene.Height / divY;
+            this.gridWidth  = (double)buffer.Width  / divX;
+            this.gridHeight = (double)buffer.Height / divY;
         }
 
+        // update img of PictureBox.
         public void update()
         {
-            this.scene.Image = _graph;
+            this.scene.Image = buffer;
         }
 
-        //Graph a grid on bitmap(small map)(mapGraph)
-        //在Bitmap上畫一個格子(依照圖片大小和解析度決定要畫的範圍)
-        public bool drawGrid(int x, int y, Color color)
+        // draw color at grid(x,y).
+        public void drawGrid(int x, int y, Color color)
         {
-            if (x >= divX || y >= divY || x < 0 || y < 0) return false;
+            if (x >= divX || y >= divY || x < 0 || y < 0) return;
+            
+            int XStart = Convert.ToInt32(x * gridWidth);
+            int YStart = Convert.ToInt32(y * gridHeight);
+            int XEdge  = Convert.ToInt32((x + 1) * gridWidth);
+            int YEdge  = Convert.ToInt32((y + 1) * gridHeight);
 
-            int XEdge = (x + 1) * gridWidth;
-            int YEdge = (y + 1) * gridHeight;
-
-            for (int j = y * gridHeight; j < YEdge; j++)
-                for (int i = x * gridWidth; i < XEdge; i++)
+            for (int j = YStart; j < YEdge; j++)
+                for (int i = XStart; i < XEdge; i++)
                 {
-                    //Graph a pixel on mapGraph
-                    _graph.SetPixel(i, j, color);
+                    buffer.SetPixel(i, j, color);
                 }
-
-            return true;
         }
-        public bool drawGrid(int x, int y, Color color, int alpha)
+        public void drawGrid(int x, int y, Color color, int alpha)
         {
-            if (x >= divX || y >= divY || x < 0 || y < 0) return false;
-
-            int XEdge = (x + 1) * gridWidth;
-            int YEdge = (y + 1) * gridHeight;
-
-            for (int j = y * gridHeight; j < YEdge; j++)
-                for (int i = x * gridWidth; i < XEdge; i++)
-                {
-                    //Graph a pixel on mapGraph
-                    _graph.SetPixel(i, j, Color.FromArgb(alpha, color));
-                }
-
-            return true;
+            drawGrid(x, y, Color.FromArgb(alpha, color));
         }
 
-
-
-        //Graph a grid on bitmap(small map)(mapGraph)
-        //在Bitmap上畫一個圖片(圖片大小需要設定)
-        public void draw2DMap( Image img, int x, int y)
+        // draw a image at grid(x,y).
+        public void draw2DMap(int x, int y, Image img, int alpha=255)
         {
             if (x >= divX || y >= divY) return;
-           
-            //圖片縮放 img.resize(gridX,gridY)
+            if (img == null) return;
+            Bitmap origin = new Bitmap(img, (int)gridWidth, (int)gridHeight);
+            Bitmap obj = getNewMapByAlpha(origin, alpha);
 
-
-            graph.DrawImage(img, x, y);
+            graph.DrawImage(obj, (int)(gridWidth *x), (int)(gridHeight *y));
         }
 
+        // set background of scene.
         public void backColorTo(Color color)
         {
             scene.BackColor = color;
         }
+
+        // get a bitmap by new alpha
+        private Bitmap getNewMapByAlpha(Bitmap origin, int alpha)
+        {
+            Bitmap obj = new Bitmap(origin.Width, origin.Height);
+            for (int i = 0; i < obj.Height; ++i)
+                for (int j = 0; j < obj.Width; ++j)
+                {
+                    obj.SetPixel(j, i, 
+                        Color.FromArgb(origin.GetPixel(j, i).A * alpha / 255, 
+                                       origin.GetPixel(j, i)    ));
+                }
+            return obj;
+        }
+
+
+        
     }
 }

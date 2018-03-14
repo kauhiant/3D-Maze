@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace My3DMaze
 {
     class RedMonster:Monster
     {
-        RedMonster(int x,int y, int z):base('R',x,y,z)
+        public RedMonster(Point3D location, Map3D map)
+            : base(location, map)
         {
-            HP = 5;
-            power = 2; attackRange = 1; trackRange = 8;
-            bonus = 1;
+            initProperty(10, 1, 1, 5);
+            initShape(Color.Red, null);
         }
+
+       
     }
 }

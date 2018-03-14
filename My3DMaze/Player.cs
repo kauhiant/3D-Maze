@@ -9,118 +9,102 @@ namespace My3DMaze
 {
     class Player
     {
+        private const int energyPow = 1;    //energy 和 HP 的比例
+        private Random rand = new Random();
+
         private Map3D map;
         private Map2D map2d;
-        public Point2D location2d;
+        
+        public Color color  { get; private set; }   //顏色
+        public Image shape  { get; private set; }   //外觀
 
-        Random rand = new Random();
-        const int energyPow = 1;    //energy 和 HP 的比例
-        public int score        { get; private set; }   //分數
-        public Graphics image   { get; private set; }   //外觀
-        public Color color      { get; private set; }   //顏色
-
+        public int score    { get; private set; }   //分數
         public int HP       { get; private set; }   //血量
         public int power    { get; private set; }   //力量
         public int energy   { get; private set; }   //能量
+        public int seenSize { get; private set; }   //視野
 
-        public Plane plane      { get { return location2d.plane; }  }   //你的視角在哪個平面 "x" or "y" or "z"
-        public Point3D location { get; private set; }   //座標 你的位置
-        public int X { get { return location.x; } }
-        public int Y { get { return location.y; } }
-        public int Z { get { return location.z; } }
+        public Point3D location   { get; private set; }   //座標 你的位置
+        public Point2D location2d { get; private set; }
+
+        public Plane plane { get { return location2d.plane; }  }   //你的視角在哪個平面 "x" or "y" or "z"
+        public int   X     { get { return location.x; } }
+        public int   Y     { get { return location.y; } }
+        public int   Z     { get { return location.z; } }
 
         //初始化 
-        public Player(Map3D maze, int x=0,int y=0,int z=0,Plane p=Plane.Z,int hp=15)
+        public Player(Map3D maze, Point3D location, Dimension p=Dimension.Z,int hp=15, int seenSize = 7)
         {
-            score = 0;
-            location = new Point3D(x, y, z);
-            location2d = new Point2D(location,p);
-            HP = hp;
-            energy = HP * energyPow; //初始能量和血量的關係
-            power = 1;
+            this.location   = location;
+            this.location2d = location.get2DPointOnPlane(p);
+
+            this.HP       = hp;
+            this.energy   = HP * energyPow; //初始能量和血量的關係
+            this.power    = 1;
+            this.score    = 0;
+            this.seenSize = seenSize;
 
             this.color = Color.Green;
+            this.shape = Image.FromFile(@"./Shield.png");
 
-            this.map = maze;
-            this.map2d = new Map2D(this.map);
-            this.map2d.creat2DMapOn(p, location.valueAtPlane(p));
+            this.map   = maze;
+            this.map2d = map.creat2DMapOn(location2d.plane);
         }
-        //初始化 
-        public Player(int x = 0, int y = 0, int z = 0, Plane p = Plane.Z, int hp = 15)
+
+
+
+        //初始化 [remove this constructor when remake is complete]
+        public Player(int x = 0, int y = 0, int z = 0, Dimension p = Dimension.Z, int hp = 15)
         {
             score = 0;
             location = new Point3D(x, y, z);
             HP = hp;
             energy = HP * energyPow; //初始能量和血量的關係
             power = 1;
+            this.seenSize = seenSize;
+            map.beAttack(location, -1);
         }
 
-        //在哪個平面
-        public string getPlaneString()
-        {
-            switch (this.plane)
-            {
-                case Plane.X:
-                    return "X = " + location.X;
-                case Plane.Y:
-                    return "Y = " + location.Y;
-                case Plane.Z:
-                    return "Z = " + location.Z;
-                default:
-                    return "Null";
-            }
-        }
+        // [remove this constructor when remake is complete]
         public int getPlaneValue()
         {
-            switch (this.plane)
-            {
-                case Plane.X:
-                    return location.x;
-                case Plane.Y:
-                    return location.y;
-                case Plane.Z:
-                    return location.z;
-                default:
-                    return -1;
-            }
+            return this.location2d.plane.value;
         }
 
         //在視角平面上的二維座標
+        // [remove this constructor when remake is complete]
         public int getA()
         {
-            if (plane == Plane.X) return location.y;
-            else if (plane == Plane.Y) return location.z;
-            else if (plane == Plane.Z) return location.x;
-            else return 0;
+            return location2d.x;
         }
         public int getB()
         {
-            if (plane == Plane.X) return location.z;
-            else if (plane == Plane.Y) return location.x;
-            else if (plane == Plane.Z) return location.y;
-            else return 0;
+            return location2d.y;
         }
 
-        //改變顏色
-        public void changeColorTo(Color color)
-        {
-            this.color = color;
-        }
-        
-        //輸出位置字串
+        //輸出位置字串[remove this constructor when remake is complete]
         public string showPoint()
         {
             return location.ToString();
         }
-        
+   
+        public void addSeenSize(int val = 1)
+        {
+            this.seenSize += val;
+            if (seenSize < 0)
+                seenSize = 0;
+        }
+             
         //增加或減少能量
         public void addEnergy(int tmp)
         {
-            if (energy < HP * energyPow)
-                energy += tmp;
+            energy += tmp;
             //能量不能大於生命
             if (energy > HP * energyPow)
                 energy = HP * energyPow;
+            //能量不能小於0
+            if (energy < 0)
+                energy = 0;
         }
 
         //增加或減少生命
@@ -152,25 +136,28 @@ namespace My3DMaze
             energy /= 2;
         }
 
+        //獲取獎勵 [力量+1]:10%   [生命+1]:40%  [能量+1]:50%
+        public void getBonus(int times=1)
+        {
+            for (; times>0; --times)
+            {
+                double tmp = rand.NextDouble();
+                if (tmp < 0.1)
+                    power++;
+                else if (tmp < 0.5)
+                    HP++;
+                else
+                    energy++;
+            }
+        }
+
+
+        // [remove this constructor when remake is complete] //
         //依字串決定要往哪個方向移動一步 在地圖上
         public bool move(Vector2D udlr, ref int[,,] map, ref int[,] nmap, int map_size)
         {
-            Point2D point2D = new Point2D(0, 0);
-            switch (plane)
-            {
-                case Plane.X:
-                    point2D.bind(location.Y, location.Z);
-                    mmove(point2D, udlr, ref nmap);
-                    break;
-                case Plane.Y:
-                    point2D.bind(location.Z, location.X);
-                    mmove(point2D, udlr, ref nmap);
-                    break;
-                case Plane.Z:
-                    point2D.bind(location.X, location.Y);
-                    mmove(point2D, udlr, ref nmap);
-                    break;
-            }
+            mmove(location2d, udlr, ref nmap);
+
             //是否走到邊界
             return location.onEdge(Const.mazeRange);
         }
@@ -186,8 +173,8 @@ namespace My3DMaze
                 return false;
             }
         }
-        
 
+        // [remove this constructor when remake is complete] //
         //Turn Plane 轉移視角
         private int planeNumber = 2; //0:X平面 1:Y平面 2:Z平面
         public void turn(string p, ref int[,,] map)
@@ -202,14 +189,9 @@ namespace My3DMaze
                 planeNumber--;
                 if (planeNumber < 0) planeNumber = 2;
             }
-            switch (planeNumber)   
-            {/*
-                case 0: plane = Plane.X; break;
-                case 1: plane = Plane.Y; break;
-                case 2: plane = Plane.Z; break;*/
-            }
         }
 
+        // [remove this constructor when remake is complete] //
         //攻擊地圖中的牆壁 全範圍 距離1 加自己共27格
         public void attack(ref int[,,] map)
         {
@@ -229,47 +211,69 @@ namespace My3DMaze
                     
         }
 
-        //攻擊地圖中的牆壁 全範圍 距離1 加自己共27格
-        public void attack(Map3D map)
+        // move
+        public void moveForward(Vector2D vector)
         {
-            //能量不夠不能攻擊
-            if (energy == 0) return;
+            Point3D target = this.location.copy();
+            Point2D target2D = target.get2DPointOnPlane(plane.dimension);
 
-       //     energy--;
+            target2D.moveForward(vector, 1);
 
-            //因為走到邊界遊戲就結束了沒辦法攻擊邊界外的空資料所以不設邊界條件
-            //以後更新可能要加邊界條件
+            if (map.valueAt(target) != 0)
+                return;
+
+            map.setValueAt(location, 0);
+            map.setValueAt(target, -1);
+            this.location.moveTo(target);
+        }
+        
+        //攻擊地圖中的牆壁 全範圍 距離1 加自己共27格
+        private void attack(Map3D map)
+        {
+            Point3D attackTarget = this.location.copy();
+
             for (int i = location.x - 1; i < location.x + 2; ++i)
                 for (int j = location.y - 1; j < location.y + 2; ++j)
                     for (int k = location.z - 1; k < location.z + 2; ++k)
-                        map.beAttack(new Point3D(i, j, k), power);
-
+                    {
+                        attackTarget.set(i, j, k);
+                        if (attackTarget.Equals(location))
+                            continue;
+                        map.beAttack(attackTarget, power);
+                    }
         }
 
-        //獲取獎勵 [力量+1]:10%   [生命+1]:40%  [能量+1]:50%
-        public void getBonus(double tmp)
+        // attack to monster and grid of map
+        public void attack()
         {
-            if (tmp < 0.1)
-                power++;
-            else if (tmp < 0.5)
-                HP++;
-            else
-                energy++;
+            if (energy == 0) return;
+            this.addEnergy(-1);
+            this.attack(this.map);
+            foreach(var monster in MonsterController.monsterList)
+            {
+                this.attack(monster);
+            }
+        }
+
+        // attack to monster
+        private void attack(Monster target)
+        {
+            if (this.location.distanceTo(target.location) > 1)
+                return;
+
+            target.addHP(-this.power);
+            if (target.isDead())
+                this.getBonus(target.KillMonster());
         }
         
-        public void moveForward(Vector2D forward)
-        {
-            this.location2d.moveForward(forward,1);
-
-            if (map.valueAt(location) != 0)
-                this.location2d.moveForward(forward, -1);
-        }
-
+        // show on MapGraph
         public void showOn(MapGraph target)
         {
-            target.drawGrid(Const.seenSize, Const.seenSize, this.color, (this.HP<126)?this.HP*255/126:255);
+            target.drawGrid(this.seenSize, this.seenSize, this.color, (this.HP<126)?this.HP*255/126:255);
+            target.draw2DMap(this.seenSize, this.seenSize, this.shape);
         }
 
+        // return this information
         public string information()
         {
             string retValue = "";
@@ -278,6 +282,12 @@ namespace My3DMaze
             retValue += "energy:" + this.energy + Environment.NewLine;
             retValue += "Plane:" + this.plane.ToString();
             return retValue;
+        }
+
+        // seen range.
+        public Range2D seenRange()
+        {
+            return new Range2D(this.location2d, this.seenSize);
         }
     }
 }

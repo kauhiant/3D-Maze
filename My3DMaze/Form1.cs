@@ -153,7 +153,7 @@ namespace My3DMaze
             
             //--創造你的角色 放置於地圖中央 Z平面 初始化血量--
             //create you and you are in center of the map
-            you = new Player(map_size / 2, map_size / 2, map_size / 2, Plane.Z, initHP);
+            you = new Player(map_size / 2, map_size / 2, map_size / 2, Dimension.Z, initHP);
             
 
             //Create each monster by BMN RMN and place in random position
@@ -218,7 +218,7 @@ namespace My3DMaze
 
             //Vector[X,Y,Z] = Color[Red,Green,Blue]
             //向量視覺化 show two vector on [toRight , toBotom] of main picture
-            showIJK(Plane.Z);
+            showIJK(Dimension.Z);
             //平面視覺化 show vector on your plane [toInner]
             pictureBox1.BackColor = Color.FromArgb(100, Color.Blue);
             
@@ -242,7 +242,7 @@ namespace My3DMaze
             _score.Text =  "分數 : " + you.score;
             _energy.Text = "能量 : " + you.energy;
             _power.Text =  "力量 : " + you.power;
-            _plane.Text = you.getPlaneString();
+            _plane.Text = you.location2d.plane.ToString();
 
             //center 主畫面 main picture
             _hp.Text = "HP : "+you.HP;
@@ -269,21 +269,21 @@ namespace My3DMaze
         //Vector[X,Y,Z] = Color[Red,Green,Blue]
         //向量視覺化 show two vector on [toRight , toBotom] of main picture
         //refer [plane V] to show colorVector
-        private void showIJK(Plane plane)  //V is a plane
+        private void showIJK(Dimension plane)  //V is a plane
         {
             switch (plane)  //在哪個平面 標示顏色
             {
-                case Plane.X:
+                case Dimension.X:
                     _colorDown.BackColor = Color.FromArgb(0,0,255);
                     _colorRight.BackColor = Color.FromArgb(0,255,0);
                     pictureBox1.BackColor = Color.FromArgb(100, Color.Red);
                     break;
-                case Plane.Y:
+                case Dimension.Y:
                     _colorDown.BackColor = Color.FromArgb(255,0,0);
                     _colorRight.BackColor = Color.FromArgb(0,0,255);
                     pictureBox1.BackColor = Color.FromArgb(100, Color.Green);
                     break;
-                case Plane.Z:
+                case Dimension.Z:
                     _colorDown.BackColor = Color.FromArgb(0,255,0);
                     _colorRight.BackColor = Color.FromArgb(255,0,0);
                     pictureBox1.BackColor = Color.FromArgb(100, Color.Blue);
@@ -301,20 +301,20 @@ namespace My3DMaze
         //創造2維地圖
         private void creat2DMap()
         {
-            showIJK(you.plane);    //顯示輔助顏色
+            showIJK(you.plane.dimension);    //顯示輔助顏色
 
             //--參考3維地圖建立2維地圖--
             for (int i = 0; i < map_size; i++)
                 for (int j = 0; j < map_size; j++)
-                    switch (you.plane)     //在哪個平面建立
+                    switch (you.plane.dimension)     //在哪個平面建立
                     {
-                        case Plane.X:
+                        case Dimension.X:
                             nmap[i, j] = map[you.location.x, i, j];
                             break;
-                        case Plane.Y:
+                        case Dimension.Y:
                             nmap[i, j] = map[j, you.location.y, i];
                             break;
-                        case Plane.Z:
+                        case Dimension.Z:
                             nmap[i, j] = map[i, j, you.location.z];
                             break;
                     }
@@ -339,18 +339,18 @@ namespace My3DMaze
                     //沒有超出邊界
                     if (you.location.inRange(Const.mazeRange) || you.location.onEdge(Const.mazeRange))
                         //找出你的[視角]在哪個平面並建立[之上]與[之下]的資料
-                        switch (you.plane)
+                        switch (you.plane.dimension)
                         {
-                            case Plane.X:
+                            case Dimension.X:
                                 smapUp[i + sFix, j + sFix] = map[you.X - 1, you.getA() + i, you.getB() + j];
                                 smapDown[i + sFix, j + sFix] = map[you.X + 1, you.getA() + i, you.getB() + j];
                                 break;
-                            case Plane.Y:
+                            case Dimension.Y:
 
                                 smapUp[i + sFix, j + sFix] = map[you.getB() + j, you.Y - 1, you.getA() + i];
                                 smapDown[i + sFix, j + sFix] = map[you.getB() + j, you.Y + 1, you.getA() + i];
                                 break;
-                            case Plane.Z:
+                            case Dimension.Z:
                                 smapUp[i + sFix, j + sFix] = map[you.getA() + i, you.getB() + j, you.Z - 1];
                                 smapDown[i + sFix, j + sFix] = map[you.getA() + i, you.getB() + j, you.Z + 1];
                                 break;
@@ -380,8 +380,8 @@ namespace My3DMaze
             draw2DMap(sField / 2, sField / 2, Color.Green, 200, ref assistMapDown, asMapGraph_size, sField);
             
             //--draw each monster-- 畫出怪物
-            drawEachMonster(sField, 255, you.plane, ref assistMapUp, -1);
-            drawEachMonster(sField, 255, you.plane, ref assistMapDown, 1);
+            drawEachMonster(sField, 255, you.plane.dimension, ref assistMapUp, -1);
+            drawEachMonster(sField, 255, you.plane.dimension, ref assistMapDown, 1);
         }
 
         //Draw nmap data on Bitmap
@@ -407,7 +407,7 @@ namespace My3DMaze
             draw2DMap(toFix, toFix, Color.Green, aph,ref mapGraph, graph_size, field);
             
             //--Draw monsters--畫出怪物
-            drawEachMonster(field,aph,you.plane,ref mapGraph);
+            drawEachMonster(field,aph,you.plane.dimension,ref mapGraph);
 
             //--Layout on pictureBox-- 
             //輸出          
@@ -465,7 +465,7 @@ namespace My3DMaze
         }
 
         //畫出每隻怪物
-        public void drawEachMonster(int size,int aph,Plane thisPlane,ref Bitmap mapGraph, int planeFix = 0)
+        public void drawEachMonster(int size,int aph,Dimension thisPlane,ref Bitmap mapGraph, int planeFix = 0)
         {
             //-for each monster-
             int a = 0, b = 0;
@@ -473,7 +473,7 @@ namespace My3DMaze
             for (int index = 0; index < monsterList.Count; index++)
             {
                 //是否跟玩家在同一平面 或修正後的平面
-                if (monsterList[index].onPlane(you.plane, you.getPlaneValue()+planeFix))
+                if (monsterList[index].onPlane(you.plane, planeFix))
                 {
                     b = 0;
                     int startA = you.getA() - toFix;
@@ -560,8 +560,7 @@ namespace My3DMaze
                         monsterList.RemoveAt(i);
                         if (i == 0) monsterList[0].changeType('P');     //殺了一個復仇者還有千千萬萬個復仇者
                         you.addScore(tmp);
-                        while (tmp-- > 0)
-                            you.getBonus(rand.NextDouble());
+                        you.getBonus(tmp);
                     }
                 }
             }

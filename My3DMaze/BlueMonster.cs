@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace My3DMaze
 {
     class BlueMonster:Monster
     {
-        BlueMonster(int x, int y, int z):base('B',x,y,z)
+        public BlueMonster(Point3D location,Map3D map)
+            :base(location,map)
         {
-            HP = 1;
-            power = 2; attackRange = 3; trackRange = 0;
-            bonus = 10;
+            initProperty(10, 2, 3, 0,10);
+            initShape(Color.Blue, null);
         }
-        /*
-        public override void move(int[,,] map, Player A)
+        
+        public override void move(Player target)
         {
-            if (trackRange == 0)
-                return;//如果不會追蹤(移動)
-            //base.move(map, A);
-        }*/
+            // 不會移動.
+        }
     }
 }
